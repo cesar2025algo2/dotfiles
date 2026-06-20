@@ -84,6 +84,13 @@ return {
 			end,
 			desc = "[f]ind [o]ld Files",
 		},
+		{
+			"<leader>fa",
+			function()
+				require("fzf-lua").lsp_references()
+			end,
+			desc = "find lsp_references",
+		},
 		{ -- Si tienes muchos archivos abiertos, este comando te permite saltar entre ellos. Es mucho más rápido que usar pestañas.
 			"<leader><leader>",
 			function()
