@@ -222,6 +222,7 @@ end
 -- end
 
 -- Crear una nota nueva automáticamente en 00_Inbox con Frontmatter
+-- Importante es posicionado en vault
 function M.new_note()
 	-- 1. Pedir el título de la nota al usuario
 	local titulo = vim.fn.input("Nombre de la nueva nota: ")
