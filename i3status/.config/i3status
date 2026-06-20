@@ -1,0 +1,79 @@
+# i3status configuration file
+# Ver man i3status para documentación
+
+general {
+    colors = true
+    interval = 1
+    color_good = "#859900"       # Verde
+    color_degraded = "#cb4b16"   # Naranja
+    color_bad = "#dc322f"        # Rojo
+}
+
+order += "volume master"
+order += "disk /"
+order += "wireless _first_"
+#order += "battery all"
+order += "load"
+order += "cpu_usage"
+order += "cpu_temperature 0"
+order += "memory"
+order += "tztime local"
+
+wireless _first_ {
+    format_up = "  %essid (%quality)"
+    format_down = "󰖪 down"
+}
+
+battery all {
+    format = "%status %percentage %remaining"
+    format_down = "No battery"
+    status_chr = "⚡"
+    status_bat = " "
+    status_unk = "?"
+    status_full = " "
+    low_threshold = 15
+}
+
+volume master {
+    format = "󰕾 %volume"
+    format_muted = "󰝟 muted (%volume)"
+    device = "default"
+    mixer = "Master"
+    mixer_idx = 0
+} 
+
+disk "/" {
+    format = "󰋊 %percentage_used used (%avail free)"
+}
+
+load {
+    format = "Load: %1min"
+}
+
+cpu_usage {
+    format = " %usage"
+}
+
+#cpu_temperature 0 {
+#    format = "%degrees°C"
+#    path = "/sys/class/thermal/thermal_zone0/temp"
+#    max_threshold = 75
+#    format_above_threshold = "%degrees°C" # Termómetro lleno cuando quema
+#}
+
+cpu_temperature 0 {
+    path = "/sys/class/hwmon/hwmon3/temp1_input"   # o el que sea coretemp (el de 55000)
+    # o si querés el package: /sys/class/hwmon/hwmon3/temp0_input si existe
+    format = "%degrees°C"
+    max_threshold = 85   # subilo un poco si querés, 75 es conservador
+}
+
+memory {
+    format = "RAM %used / %available"
+    threshold_degraded = "1G"
+    format_degraded = "󱃂 LOW RAM: %free"
+}
+
+tztime local {
+    format = "%d-%m-%Y %H:%M:%S"
+}

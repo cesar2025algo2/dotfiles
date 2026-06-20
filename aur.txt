@@ -1,0 +1,5 @@
+pacman4console
+pacman4console-debug
+yay
+yay-debug
+ytsurf

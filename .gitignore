@@ -1,0 +1,23 @@
+
+# Secretos y Configs privadas
+rclone.conf
+*.pem
+*.key
+
+# Neovim (Caché y temporales)
+nvim/.config/nvim/.netrwhist
+nvim/.config/nvim/undo/
+nvim/.config/nvim/swap/
+nvim/.config/nvim/backup/
+nvim/.config/nvim/shada/
+
+# Si usas Lazy.nvim, esto guarda el estado de los plugins. 
+# La mayoría lo incluye, pero algunos prefieren ignorarlo.
+# nvim/.config/nvim/lazy-lock.json 
+
+# Archivos de sistema/compilación
+*.o
+*.so
+*.pyc
+.DS_Store
+.directory

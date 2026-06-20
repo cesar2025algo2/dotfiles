@@ -1,0 +1,47 @@
+# Si prefieres pegar con `Ctrl+V` en lugar del botón central
+set selection-clipboard clipboard
+
+# ==================== COLORES Gruvbox Dark ====================
+#set recolor true
+#set recolor-lightcolor "#282828"   # fondo (bg)
+#set recolor-darkcolor  "#ebdbb2"   # texto principal (fg)
+#set recolor-keephue true           # mantiene colores en gráficos/fórmulas
+
+# Colores de interfaz (statusbar, completion, etc.)
+#set default-fg "#ebdbb2"
+#set default-bg "#282828"
+#set completion-bg "#3c3836"
+#set completion-fg "#ebdbb2"
+#set completion-highlight-bg "#504945"
+#set completion-highlight-fg "#ebdbb2"
+#set statusbar-fg "#ebdbb2"
+#set statusbar-bg "#282828"
+#set notification-bg "#3c3836"
+#set notification-fg "#ebdbb2"
+#set notification-error-bg "#cc241d"
+#set notification-error-fg "#ebdbb2"
+
+# ==================== COLORES Catppuccin Mocha ====================
+#set recolor true
+set recolor-lightcolor "#1E1E2E"   # base (fondo)
+set recolor-darkcolor  "#CDD6F4"   # text (texto principal)
+set recolor-keephue true           # respeta colores de gráficos, fórmulas y diagramas
+
+# Colores de la interfaz de Zathura (para que combine perfecto)
+set default-fg "#CDD6F4"
+set default-bg "#1E1E2E"
+set completion-bg "#313244"
+set completion-fg "#CDD6F4"
+set completion-highlight-bg "#585B70"
+set completion-highlight-fg "#CDD6F4"
+set statusbar-fg "#CDD6F4"
+set statusbar-bg "#1E1E2E"
+set notification-bg "#313244"
+set notification-fg "#CDD6F4"
+set notification-error-bg "#F38BA8"
+set notification-error-fg "#1E1E2E"
+
+
+# Pone el nombre del archivo en el titulo de la ventana
+set window-title-basename true
+set window-title-prefix "[PDF] "

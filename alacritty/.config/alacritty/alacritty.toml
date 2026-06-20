@@ -1,0 +1,16 @@
+[window]
+# Transparencia (0.0 es invisible, 1.0 es sólido)
+# Útil si tu notebook tiene pocos recursos y no quieres efectos pesados
+opacity = 0.9 
+
+[font]
+# Cambia "CaskaydiaCove Nerd Font" por la Nerd Font que instales
+normal = { family = "CaskaydiaCove Nerd Font", style = "Regular" }
+size = 11.0
+
+[terminal]
+# Esto obliga a Alacritty a abrir Zsh directamente
+shell = { program = "/bin/zsh", args = ["--login"] }
+
+[colors]
+# Alacritty usa colores base, pero Oh My Zsh aplicará el tema visual encima

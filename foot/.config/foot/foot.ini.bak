@@ -1,0 +1,35 @@
+[main]
+# Usa el nombre que copiaste en el paso anterior
+font=JetBrainsMono Nerd Font:size=14
+pad=0x0
+
+[colors-dark]
+#alpha=0.85
+#background=111111
+#foreground=ffffff
+alpha=0.90
+background=282828
+foreground=dfbf8e
+
+## Colores ANSI (Para que Oh My Zsh se vea suave)
+regular0=282828  # black
+regular1=ea6962  # red
+regular2=a9b665  # green
+regular3=d8a657  # yellow
+#regular4=7daea3  # blue
+regular5=d3869b  # magenta
+regular6=89b482  # cyan
+regular7=dfbf8e  # white
+
+bright0=928374   # bright black
+bright1=ef938e   # bright red
+bright2=bbc585   # bright green
+#bright3=e1bb7e   # bright yellow
+bright4=99bdba   # bright blue
+bright5=d7a1ad   # bright magenta
+bright6=adad81   # bright cyan
+bright7=e4be7b   # bright white
+
+# Ajuste específico para que el prompt de Agnoster sea ultra-legible
+regular4=458588  # Un azul marino más profundo (pero suave) para la ruta
+bright4=7daea3   # Un azul más claro para cuando resalte
