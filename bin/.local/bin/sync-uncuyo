@@ -1,0 +1,99 @@
+#!/usr/bin/env zsh
+
+# Variables de entorno locales del script
+LOCAL_LOG="$HOME/.sync-log-local.txt"
+SYNCED_LOG="$HOME/uncuyo/.sync-log.txt"
+REMOTE="UNCuyo:lcc"
+LOCAL_DIR="$HOME/uncuyo/"
+
+# Funciones internas de log
+log-local() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') | $1 | $(hostname) | SUCCESS" >> "$LOCAL_LOG"
+}
+
+log-synced() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') | $1 | $(hostname) | SUCCESS" >> "$SYNCED_LOG"
+}
+
+mostrar_ayuda() {
+    echo "Uso: sync-uncuyo [subcomando] [opciones_rclone]"
+    echo ""
+    echo "Subcomandos disponibles:"
+    echo "  up             Sube los archivos locales a la nube"
+    echo "  down           Baja los archivos de la nube a la máquina local"
+    echo "  history        Muestra el historial de subidas en la nube"
+    echo "  history-local  Muestra el historial completo de esta máquina"
+    echo "  last           Muestra la última subida a la nube"
+    echo "  last-local     Muestra la última actividad local"
+}
+
+# Si no se pasan argumentos, mostramos la ayuda
+if [[ -z "$1" ]]; then
+    mostrar_ayuda
+    exit 0
+fi
+
+SUBCOMANDO=$1
+shift # Desplaza los argumentos para pasar el resto ($@) a rclone
+
+case "$SUBCOMANDO" in
+    up)
+        echo "🔼 Subiendo a OneDrive..."
+        if [[ "$*" == *"--dry-run"* ]] || [[ "$*" == *"-n"* ]]; then
+            rclone sync "$LOCAL_DIR" "$REMOTE" --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"
+            echo "🔍 Dry-run - No se registró"
+        else
+            if rclone sync "$LOCAL_DIR" "$REMOTE" --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"; then
+                log-local "UP"
+                log-synced "UP"
+                echo "✅ Subida completada y registrada"
+            else
+                echo "❌ Error en la subida"
+                exit 1
+            fi
+        fi
+        ;;
+        
+    down)
+        echo "🔽 Bajando desde OneDrive..."
+        if [[ "$*" == *"--dry-run"* ]] || [[ "$*" == *"-n"* ]]; then
+            rclone sync "$REMOTE" "$LOCAL_DIR" --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"
+            echo "🔍 Dry-run - No se registró"
+        else
+            if rclone sync "$REMOTE" "$LOCAL_DIR" --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"; then
+                log-local "DOWN"
+                echo "✅ Bajada completada y registrada localmente"
+            else
+                echo "❌ Error en la bajada"
+                exit 1
+            fi
+        fi
+        ;;
+
+    history)
+        echo "=== HISTORIAL DE SUBIDAS EN LA NUBE ==="
+        [ -f "$SYNCED_LOG" ] && tail -n 30 "$SYNCED_LOG" || echo "No hay historial sincronizado aún"
+        ;;
+
+    history-local)
+        echo "=== HISTORIAL LOCAL COMPLETO ==="
+        [ -f "$LOCAL_LOG" ] && tail -n 30 "$LOCAL_LOG" || echo "No hay historial local aún"
+        ;;
+
+    last)
+        echo "=== ÚLTIMA SUBIDA A LA NUBE ==="
+        [ -f "$SYNCED_LOG" ] && tail -n 1 "$SYNCED_LOG" || echo "No hay historial sincronizado aún"
+        ;;
+
+    last-local)
+        echo "=== ÚLTIMA ACTIVIDAD EN ESTA MÁQUINA ==="
+        [ -f "$LOCAL_LOG" ] && tail -n 1 "$LOCAL_LOG" || echo "No hay historial local aún"
+        ;;
+
+    *)
+        echo "❌ Subcomando desconocido: $SUBCOMANDO"
+        mostrar_ayuda
+        exit 1
+        ;;
+esac
+

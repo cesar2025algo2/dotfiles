@@ -1,0 +1,47 @@
+#!/usr/bin/env zsh
+
+# ==================== Gemini AI ====================
+# Carga el archivo de secretos si existe, pero no frena la ejecución si no está
+# [[ -f ~/.zsh_secrets ]] && source ~/.zsh_secrets
+
+# 1. En lugar de directamente usar mi API Key
+# local API_KEY="AnIzTsyDKgdSVGnO26r6g8af1j907OVH78t73cy0"
+# Validamos que la variable exista antes de correr el resto del código
+if [[ -z "$GEMINI_API_KEY" ]]; then
+  echo "Error: GEMINI_API_KEY no está configurada. Revisa ~/.zsh_secrets y asegurate que diga: export GEMINI_API_KEY='AquiVaTuKeyVerdaderaValidaDelMomentocyA'"
+  return 1
+fi
+
+# El resto de tu código interactúa directamente con $GEMINI_API_KEY
+# echo "Usando la API key de manera segura..."
+# Ejemplo: curl -H "Authorization: Bearer $GEMINI_API_KEY" ...
+
+
+# 2. Usamos el modelo más equilibrado de la lista
+local MODEL="gemini-3.1-flash-lite"
+
+local PROMPT="$1"
+if [ -z "$PROMPT" ]; then echo "Escribe tu consulta."; return; fi
+
+local JSON_PAYLOAD=$(jq -n --arg msg "$PROMPT" '{contents: [{parts: [{text: $msg}]}]}')
+local TMP_RES=$(mktemp)
+
+# En 2026, lo más probable es que v1beta sea el estándar para la serie 3
+curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}" \
+    -H 'Content-Type: application/json' \
+    -d "$JSON_PAYLOAD" > "$TMP_RES"
+
+local TEXT=$(jq -r '.candidates[0].content.parts[0].text // empty' "$TMP_RES")
+
+if [ -n "$TEXT" ] && [ "$TEXT" != "null" ]; then
+  printf "%b\n" "$TEXT"
+else
+  local ERR_MSG=$(jq -r '.error.message // "Error desconocido"' "$TMP_RES")
+  echo "⚠️ Google ($MODEL): $ERR_MSG"
+  
+  # Si sigue fallando por cuota, te doy el consejo
+  if [[ "$ERR_MSG" == *"Quota exceeded"* ]]; then
+      echo "💡 Intenta usar: models/gemini-3.1-flash-lite (es el que menos cuota consume)"
+  fi
+fi
+rm "$TMP_RES"

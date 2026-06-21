@@ -1,0 +1,25 @@
+#!/usr/bin/env zsh
+
+[[ $# -eq 0 ]] && { echo "Uso: enes <palabra>"; exit 1 }
+
+export STARDICT_DATA_DIR="$HOME/.local/share/stardict"
+local palabra="$1"
+local columnas=$(tput cols)
+
+{
+    echo -e "\e[1;33m--- Dictionary (ES-ES) ---\e[0m"
+    sdcv -n -c --utf8-output -u "Wiktionary en-en" "$palabra" | \
+        html2text -b "$columnas" --ignore-links --ignore-images --unicode-snob | \
+        sed "s/-->/\x1b[1;36m&/g; s/$/\x1b[0m/"
+
+    echo -e "\n\e[1;32m--- Pronunciación (Longman) ---\e[0m"
+    sdcv -n -c -u "Longman Pronunciation Dictionary 3rd Ed. (En-En)" "$palabra"
+
+    echo -e "\n\e[1;33m--- Translate (EN-ES) ---\e[0m"
+    sdcv -n -c --utf8-output -u "English-español FreeDict+WikDict dictionary (en-es)" "$palabra" | \
+        html2text -b "$columnas" --ignore-links --ignore-images --unicode-snob | \
+        sed "s/-->/\x1b[1;36m&/g; s/$/\x1b[0m/"
+
+} | less -F -X -R
+
+
