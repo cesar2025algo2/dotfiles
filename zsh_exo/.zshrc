@@ -4,8 +4,8 @@
 # Agrega tus binarios locales y de NPM al inicio del PATH de forma segura
 export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"
 export STARDICT_DATA_DIR="$HOME/.local/share/stardict"
-export EDITOR=vim
-export VISUAL=vim
+export EDITOR=nvim
+export VISUAL=nvim
 export COLORTERM=truecolor
 
 
@@ -111,146 +111,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-
-
-# # ==================== UNCuyo Cloud Sync ====================
-# # Sincronización inteligente con OneDrive UNCuyo
-# # ==================== SISTEMA DE REGISTRO DE SINCRONIZACIÓN ====================
-# # ==================== SISTEMA DE LOGS UNCuyo ====================
-#
-# LOCAL_LOG="$HOME/.sync-log-local.txt"      # Log completo (no se sincroniza)
-# SYNCED_LOG="$HOME/uncuyo/.sync-log.txt"    # Solo subidas (se sincroniza)
-#
-# log-local() {
-#     local direction=$1
-#     echo "$(date '+%Y-%m-%d %H:%M:%S') | $direction | $(hostname) | SUCCESS" >> "$LOCAL_LOG"
-# }
-#
-# log-synced() {
-#     local direction=$1
-#     echo "$(date '+%Y-%m-%d %H:%M:%S') | $direction | $(hostname) | SUCCESS" >> "$SYNCED_LOG"
-# }
-#
-# # ====================== FUNCIONES DE SYNC ======================
-#
-# sync-uncuyo-up() {
-#     echo "🔼 Subiendo a OneDrive..."
-#
-#     if [[ "$*" == *"--dry-run"* ]] || [[ "$*" == *"-n"* ]]; then
-#         rclone sync ~/uncuyo/ UNCuyo:lcc \
-#             --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"
-#         echo "🔍 Dry-run - No se registró"
-#     else
-#         if rclone sync ~/uncuyo/ UNCuyo:lcc \
-#             --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"; then
-#
-#             log-local "UP"
-#             log-synced "UP"
-#             echo "✅ Subida completada y registrada"
-#         else
-#             echo "❌ Error en la subida"
-#         fi
-#     fi
-# }
-#
-# sync-uncuyo-down() {
-#     echo "🔽 Bajando desde OneDrive..."
-#
-#     if [[ "$*" == *"--dry-run"* ]] || [[ "$*" == *"-n"* ]]; then
-#         rclone sync UNCuyo:lcc ~/uncuyo/ \
-#             --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"
-#         echo "🔍 Dry-run - No se registró"
-#     else
-#         if rclone sync UNCuyo:lcc ~/uncuyo/ \
-#             --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"; then
-#
-#             log-local "DOWN"
-#             echo "✅ Bajada completada y registrada localmente"
-#         else
-#             echo "❌ Error en la bajada"
-#         fi
-#     fi
-# }
-#
-# # ====================== ALIASES ======================
-#
-# # Muestra SOLO la última subida a la nube
-# alias who-last-sync='echo "=== ÚLTIMA SUBIDA A LA NUBE ===" && \
-#     if [ -f "$SYNCED_LOG" ]; then
-#         tail -n 1 "$SYNCED_LOG"
-#     else
-#         echo "No hay historial sincronizado aún"
-#     fi'
-#
-# # Historial completo de subidas (sincronizado)
-# alias sync-history='echo "=== HISTORIAL DE SUBIDAS EN LA NUBE ===" && \
-#     if [ -f "$SYNCED_LOG" ]; then
-#         cat "$SYNCED_LOG" | tail -n 30
-#     else
-#         echo "No hay historial sincronizado aún"
-#     fi'
-#
-# # Historial local completo
-# alias sync-history-local='echo "=== HISTORIAL LOCAL COMPLETO ===" && \
-#     if [ -f "$LOCAL_LOG" ]; then
-#         cat "$LOCAL_LOG" | tail -n 30
-#     else
-#         echo "No hay historial local aún"
-#     fi'
-#
-# # Última actividad en esta máquina
-# alias who-last-local='echo "=== ÚLTIMA ACTIVIDAD EN ESTA MÁQUINA ===" && \
-#     if [ -f "$LOCAL_LOG" ]; then
-#         tail -n 1 "$LOCAL_LOG"
-#     else
-#         echo "No hay historial local aún"
-#     fi'
-
-
-# sync-uncuyo-up() {
-#     echo "Iniciando sincronización hacia OneDrive..."
-#     # Añadimos --stats-one-line para un resumen limpio al final
-#     rclone sync ~/uncuyo/ UNCuyo:lcc --track-renames --create-empty-src-dirs --fast-list -v --progress $@
-#     # rclone sync ~/uncuyo/ UNCuyo:lcc --track-renames -v --progress --stats-one-line $@
-#     #
-#     # if [ $? -eq 0 ]; then
-#     #     echo "✅ Sincronización de subida completada con éxito."
-#     # else
-#     #     echo "❌ Hubo errores durante la sincronización. Revisá el output de rclone arriba."
-#     # fi
-# }
-#
-# # Sincronizar DESDE la nube HACIA la laptop (Download)
-# sync-uncuyo-down() {
-#     echo "Sincronizando desde OneDrive a local (Bajada)..."
-#     rclone sync UNCuyo:lcc ~/uncuyo/ --track-renames --create-empty-src-dirs --fast-list -v --progress $@
-#     # rclone sync UNCuyo:lcc ~/uncuyo/ --track-renames -v --progress --stats-one-line $@
-#     #
-#     # if [ $? -eq 0 ]; then
-#     #     echo "✅ Sincronización de bajada completada con éxito."
-#     # else
-#     #     echo "❌ Hubo errores. Es posible que falten archivos por descargar."
-#     # fi
-# }
-
-# # Alias para un simulacro rápido
-# alias check-uncuyo-up='sync-uncuyo-up --dry-run'
-#
-# # Alias para simular la bajada
-# alias check-uncuyo-down='sync-uncuyo-down --dry-run'
-#
-# #Alias para checkear qué falta subir (me parece que no me sirve)
-# alias check-falta-subir='rclone check ~/uncuyo/ UNCuyo:lcc --one-way'
-#
-# #Alias para checkear qué falta bajar (me parece que no me sirve)
-# alias check-falta-bajar='rclone check UNCuyo:lcc ~/uncuyo/ --one-way'
-#
-# # Alias para Uso diario / habitual
-# alias status-uncuyo='echo "=== STATUS UNCuyo ===" && rclone check ~/uncuyo/ UNCuyo:lcc --track-renames --size-only --fast-list --retries 1 -q && echo "✅ Todo sincronizado" || echo "⚠️  Hay diferencias (usa verify-uncuyo)"'
-#
-# # Alias para Diagnóstico completo
-# alias verify-uncuyo='echo "=== VERIFY UNCuyo ===" && rclone check ~/uncuyo/ UNCuyo:lcc --track-renames --size-only --fast-list -v && echo "✅ Todo sincronizado" || echo "⚠️  Hay diferencias"'
-
 # ==================== ALIASES GENERALES ====================
 alias geogebra='_JAVA_AWT_WM_NONREPARENTING=1 geogebra'
 alias fon='bash ~/.local/bin/fon.sh'
@@ -267,22 +127,6 @@ alias limpiar='~/.local/bin/mantenimiento.sh'
 # chequear swap zram
 alias swap-check='~/.local/bin/check-swap.sh'
 
-# ==================== ALIASES DE UTILERÍA (UNCuyo Sync) ====================
-alias sync-uncuyo-up='sync-uncuyo up'
-alias sync-uncuyo-down='sync-uncuyo down'
-alias check-uncuyo-up='sync-uncuyo up --dry-run'
-alias check-uncuyo-down='sync-uncuyo down --dry-run'
-
-alias who-last-sync='sync-uncuyo last'
-alias who-last-local='sync-uncuyo last-local'
-alias sync-history='sync-uncuyo history'
-alias sync-history-local='sync-uncuyo history-local'
-
-alias check-falta-subir='rclone check ~/uncuyo/ UNCuyo:lcc --one-way'
-alias check-falta-bajar='rclone check UNCuyo:lcc ~/uncuyo/ --one-way'
-alias status-uncuyo='echo "=== STATUS UNCuyo ===" && rclone check ~/uncuyo/ UNCuyo:lcc --track-renames --size-only --fast-list --retries 1 -q && echo "✅ Todo sincronizado" || echo "⚠️  Hay diferencias (usa verify-uncuyo)"'
-alias verify-uncuyo='echo "=== VERIFY UNCuyo ===" && rclone check ~/uncuyo/ UNCuyo:lcc --track-renames --size-only --fast-list -v && echo "✅ Todo sincronizado" || echo "⚠️  Hay diferencias"'
-
 # ==================== CONFIGURACIÓN DE PANTALLA (Wayland vs X11) ====================
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
     export MOZ_ENABLE_WAYLAND=1
@@ -293,76 +137,6 @@ else
     export QT_QPA_PLATFORM=xcb
     export XDG_CURRENT_DESKTOP=i3
 fi
-
-# # ==================== StarDict ====================
-# enes() {
-#     [[ $# -eq 0 ]] && { echo "Uso: def <palabra>"; return 1 }
-#
-#     local palabra="$1"
-#     local columnas=$(tput cols)
-#
-#     {
-#         # --- Dictionary 1: English-English (Con formato color y limpieza HTML) ---
-#         echo -e "\e[1;33m--- Dictionary (ES-ES) ---\e[0m"
-#         sdcv -n -c --utf8-output -u "Wiktionary en-en" "$palabra" | \
-#             html2text -b "$columnas" --ignore-links --ignore-images --unicode-snob | \
-#             sed "s/-->/\x1b[1;36m&/g; s/$/\x1b[0m/"
-#
-#         echo -e "\n" # Espaciador
-#
-#         # --- Diccionario 2: Longman (Salida cruda o personalizada) ---
-#         echo -e "\e[1;32m--- Pronunciación (Longman) ---\e[0m"
-#         # Aquí puedes añadir un sed o un awk específico para Longman si lo deseas
-#         sdcv -n -c -u "Longman Pronunciation Dictionary 3rd Ed. (En-En)" "$palabra"
-#
-#         # --- Diccionario 3: (Opcional) Ejemplo de un tercer formato ---
-#          # echo -e "\n\e[1;35m--- Definición Rápida ---\e[0m"
-#          # sdcv -n -u "English-español FreeDict+WikDict dictionary (en-es)" "$palabra" | head -n 10
-#
-#         # --- Diccionario 4: English-Español (Con formato color y limpieza HTML) ---
-#         echo -e "\e[1;33m--- Translate (EN-ES) ---\e[0m"
-#         sdcv -n -c --utf8-output -u "English-español FreeDict+WikDict dictionary (en-es)" "$palabra" | \
-#             html2text -b "$columnas" --ignore-links --ignore-images --unicode-snob | \
-#             sed "s/-->/\x1b[1;36m&/g; s/$/\x1b[0m/"
-#
-#     } | less -F -X -R
-# }
-#
-# esen() {
-#     [[ $# -eq 0 ]] && { echo "Uso: def <palabra>"; return 1 }
-#
-#     local palabra="$1"
-#     local columnas=$(tput cols)
-#
-#     {
-#         # --- Dictionary 1: English-English (Con formato color y limpieza HTML) ---
-#         echo -e "\e[1;33m--- Traducción (EN-ES) ---\e[0m"
-#         sdcv -n -c --utf8-output -u "Spanish-English FreeDict Dictionary (es-en)" "$palabra" | \
-#             html2text -b "$columnas" --ignore-links --ignore-images --unicode-snob | \
-#             sed "s/-->/\x1b[1;36m&/g; s/$/\x1b[0m/"
-#
-#         echo -e "\n" # Espaciador
-#
-#         # --- Diccionario 2: Longman (Salida cruda o personalizada) ---
-#         #echo -e "\e[1;32m--- Pronunciación (Longman) ---\e[0m"
-#         # Aquí puedes añadir un sed o un awk específico para Longman si lo deseas
-#         # sdcv -n -c -u "Wiktionary es-en" "$palabra"
-#
-#         # --- Diccionario 3: (Opcional) Ejemplo de un tercer formato ---
-#          # echo -e "\n\e[1;35m--- Definición Rápida ---\e[0m"
-#          # sdcv -n -u "English-español FreeDict+WikDict dictionary (en-es)" "$palabra" | head -n 10
-#
-#         # --- Diccionario 4: English-Español (Con formato color y limpieza HTML) ---
-#          echo -e "\e[1;33m--- Traducción (EN-ES) ---\e[0m"
-#          sdcv -n -c --utf8-output -u "Wiktionary es-en" "$palabra" | \
-#              html2text -b "$columnas" --ignore-links --ignore-images --unicode-snob | \
-#              sed "s/-->/\x1b[1;36m&/g; s/$/\x1b[0m/"
-#
-#     } | less -F -X -R
-# }
-#
-
-
 
 # ==================== CONFIGURACIÓN NNN ====================
 export NNN_TERMINAL="foot"          # Fuerza que use foot para cualquier cosa que necesite un terminal nuevo
