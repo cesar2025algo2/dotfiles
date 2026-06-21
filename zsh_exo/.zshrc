@@ -397,3 +397,6 @@ pickcolor() {
     echo "$color" | wl-copy # Esto lo copia al portapapeles automáticamente
 }
 
+# ==================== SECRETOS / API KEYS ====================
+[[ -f ~/.zsh_secrets ]] && source ~/.zsh_secrets
+

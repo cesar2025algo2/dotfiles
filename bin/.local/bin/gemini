@@ -1,8 +1,6 @@
 #!/usr/bin/env zsh
 
 # ==================== Gemini AI ====================
-# Carga el archivo de secretos si existe, pero no frena la ejecución si no está
-# [[ -f ~/.zsh_secrets ]] && source ~/.zsh_secrets
 
 # 1. En lugar de directamente usar mi API Key
 # local API_KEY="AnIzTsyDKgdSVGnO26r6g8af1j907OVH78t73cy0"
