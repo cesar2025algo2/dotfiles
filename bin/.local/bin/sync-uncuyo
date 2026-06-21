@@ -15,84 +15,111 @@ log-synced() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') | $1 | $(hostname) | SUCCESS" >> "$SYNCED_LOG"
 }
 
-mostrar_ayuda() {
-    echo "Uso: sync-uncuyo [subcomando] [opciones_rclone]"
+show_help() {
+    echo "Usage: sync-uncuyo [subcommand] [rclone_options]"
     echo ""
-    echo "Subcomandos disponibles:"
-    echo "  up             Sube los archivos locales a la nube"
-    echo "  down           Baja los archivos de la nube a la máquina local"
-    echo "  history        Muestra el historial de subidas en la nube"
-    echo "  history-local  Muestra el historial completo de esta máquina"
-    echo "  last           Muestra la última subida a la nube"
-    echo "  last-local     Muestra la última actividad local"
+    echo "Available subcommands:"
+    echo "  up             Upload local files to the cloud"
+    echo "  down           Download files from the cloud to the local machine"
+    echo "  history        Show cloud upload history"
+    echo "  history-local  Show full history of this machine"
+    echo "  last           Show last cloud upload"
+    echo "  last-local     Show last local activity"
+    echo "  up-sim         Simulating Upload local files to the cloud"
+    echo "  down-sim       Simulating Download local files to the cloud"
+    echo "  status         show status"
+    echo "  verify         Hace un diagnostico de verificacion de diferencias origen-destino (bidireccional)"
 }
 
 # Si no se pasan argumentos, mostramos la ayuda
 if [[ -z "$1" ]]; then
-    mostrar_ayuda
+    show_help
     exit 0
 fi
 
-SUBCOMANDO=$1
+SUBCOMMAND=$1
 shift # Desplaza los argumentos para pasar el resto ($@) a rclone
 
-case "$SUBCOMANDO" in
+case "$SUBCOMMAND" in
     up)
-        echo "🔼 Subiendo a OneDrive..."
+        # echo "▲ Uploading to OneDrive..."
+        # echo "-> Uploading to OneDrive..."
         if [[ "$*" == *"--dry-run"* ]] || [[ "$*" == *"-n"* ]]; then
+            echo "-> Uploading to OneDrive... (Simulation)"
             rclone sync "$LOCAL_DIR" "$REMOTE" --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"
-            echo "🔍 Dry-run - No se registró"
+            echo "🔍 Dry-run - Not logged"
         else
+            echo "-> Uploading to OneDrive..."
             if rclone sync "$LOCAL_DIR" "$REMOTE" --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"; then
                 log-local "UP"
                 log-synced "UP"
-                echo "✅ Subida completada y registrada"
+                echo "[OK] Upload completed and logged"
             else
-                echo "❌ Error en la subida"
+                echo "[FAIL] Upload error"
                 exit 1
             fi
         fi
         ;;
         
     down)
-        echo "🔽 Bajando desde OneDrive..."
+        # echo "▼ Downloading from OneDrive..."
         if [[ "$*" == *"--dry-run"* ]] || [[ "$*" == *"-n"* ]]; then
+            echo "<- Downloading from OneDrive... (Simulation)"
             rclone sync "$REMOTE" "$LOCAL_DIR" --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"
-            echo "🔍 Dry-run - No se registró"
+            echo "🔍 Dry-run - Not logged"
         else
+            echo "<- Downloading from OneDrive..."
             if rclone sync "$REMOTE" "$LOCAL_DIR" --track-renames --create-empty-src-dirs --fast-list -v --progress "$@"; then
                 log-local "DOWN"
-                echo "✅ Bajada completada y registrada localmente"
+                echo "[OK] Download completed and logged locally"
             else
-                echo "❌ Error en la bajada"
+                echo "[FAIL] Download error"
                 exit 1
             fi
         fi
         ;;
 
     history)
-        echo "=== HISTORIAL DE SUBIDAS EN LA NUBE ==="
-        [ -f "$SYNCED_LOG" ] && tail -n 30 "$SYNCED_LOG" || echo "No hay historial sincronizado aún"
+        echo "=== CLOUD UPLOAD HISTORY ==="
+        [ -f "$SYNCED_LOG" ] && tail -n 30 "$SYNCED_LOG" || echo "No synchronized history yet"
         ;;
 
     history-local)
-        echo "=== HISTORIAL LOCAL COMPLETO ==="
-        [ -f "$LOCAL_LOG" ] && tail -n 30 "$LOCAL_LOG" || echo "No hay historial local aún"
+        echo "=== FULL LOCAL HISTORY ==="
+        [ -f "$LOCAL_LOG" ] && tail -n 30 "$LOCAL_LOG" || echo "No local history yet"
         ;;
 
     last)
-        echo "=== ÚLTIMA SUBIDA A LA NUBE ==="
-        [ -f "$SYNCED_LOG" ] && tail -n 1 "$SYNCED_LOG" || echo "No hay historial sincronizado aún"
+        echo "=== LAST CLOUD UPLOAD ==="
+        [ -f "$SYNCED_LOG" ] && tail -n 1 "$SYNCED_LOG" || echo " No synchronized history yet"
         ;;
 
     last-local)
-        echo "=== ÚLTIMA ACTIVIDAD EN ESTA MÁQUINA ==="
-        [ -f "$LOCAL_LOG" ] && tail -n 1 "$LOCAL_LOG" || echo "No hay historial local aún"
+        echo "=== LAST ACTIVITY ON THIS MACHINE ==="
+        [ -f "$LOCAL_LOG" ] && tail -n 1 "$LOCAL_LOG" || echo "No local history yet"
+        ;;
+
+    up-sim)
+        # echo "=== Uploading to the OneDrive Simulation... ==="
+        sync-uncuyo up --dry-run
+        ;;
+
+    down-sim)
+        echo "=== Downloading from OneDrive Simulation... ==="
+        sync-uncuyo down --dry-run
+        ;;
+
+    status)
+        echo "=== STATUS UNCuyo ==="  && rclone check ~/uncuyo/ UNCuyo:lcc --track-renames --size-only --fast-list --retries 1 -q && echo "[OK] Todo sincronizado" || echo "[WARNING] Hay diferencias (usa verify)"
+        ;;
+
+    verify)
+        echo "=== VERIFY UNCuyo ===" && rclone check ~/uncuyo/ UNCuyo:lcc --track-renames --size-only --fast-list -v && echo "[OK] Todo sincronizado" || echo "[WARNING] Hay diferencias"
         ;;
 
     *)
-        echo "❌ Subcomando desconocido: $SUBCOMANDO"
-        mostrar_ayuda
+        echo "[ERROR] Unknown subcommand: $SUBCOMMAND"
+        show_help
         exit 1
         ;;
 esac
