@@ -1,4 +1,5 @@
 #!/bin/bash
+# DESC: Muestra cuánto ocupa zram y cuánto ocupa el swap físico en disco
 
 # Verificar cuánto ocupa zram y cuánto ocupa el swap físico en disco
 # Obtenemos los valores de /proc/swaps

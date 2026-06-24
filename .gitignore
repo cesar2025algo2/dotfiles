@@ -1,23 +1,69 @@
+# ==========================================
+# Creado manualmente + Toptal (Linux, Vim)
+# ==========================================
 
-# Secretos y Configs privadas
+### Secretos y Configs privadas (¡CRÍTICO!) ###
 rclone.conf
 *.pem
 *.key
+*.local
+.netrc
+secrets.sh
 
-# Neovim (Caché y temporales)
-nvim/.config/nvim/.netrwhist
-nvim/.config/nvim/undo/
-nvim/.config/nvim/swap/
-nvim/.config/nvim/backup/
-nvim/.config/nvim/shada/
+### Neovim ###
+# (Toptal falló aquí, añadimos manual)
+.config/nvim/.netrwhist
+.config/nvim/undo/
+.config/nvim/swap/
+.config/nvim/backup/
+.config/nvim/shada/
+# Descomenta la siguiente línea solo si NO quieres fijar versiones de plugins
+# .config/nvim/lazy-lock.json
 
-# Si usas Lazy.nvim, esto guarda el estado de los plugins. 
-# La mayoría lo incluye, pero algunos prefieren ignorarlo.
-# nvim/.config/nvim/lazy-lock.json 
+### Vim (Toptal) ###
+[._]*.s[a-v][a-z]
+!*.svg
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+Session.vim
+.netrwhist
+tags
+[._]*.un~
 
-# Archivos de sistema/compilación
+### Shell (Zsh / Bash) ###
+.zsh_history
+.zcompdump*
+.zsh_sessions/
+.history
+.bash_history
+.python_history
+
+### Sway / Wayland / Entorno Gráfico ###
+.config/sway/swaync/
+.config/sway/*.log
+.config/waybar/*.log
+.cache/
+thumbs.db
+.DS_Store
+
+### Linux / Arch General ###
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
 *.o
 *.so
 *.pyc
-.DS_Store
-.directory
+pacman.log
+*.pacnew
+*.pacsave
+__pycache__/
+
+### Compilación y temporales de lenguajes ###
+node_modules/
+venv/
+.venv/
+bin/
+obj/

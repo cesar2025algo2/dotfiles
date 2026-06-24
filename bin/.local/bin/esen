@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+# DESC: Diccionario traductor Español-English
 
 [[ $# -eq 0 ]] && { echo "Uso: esen <palabra>"; exit 1 }
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+# DESC: devuelve la pronunciacion en ingles (IPA) de la palabra de entrada
 
 # Verifica si pasaste una palabra
 if [ -z "$1" ]; then

@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+# DESC: Sincroniza los archivos del directorio `uncuyo` con OneDrive UNCuyo
 
 # Variables de entorno locales del script
 LOCAL_LOG="$HOME/.sync-log-local.txt"
