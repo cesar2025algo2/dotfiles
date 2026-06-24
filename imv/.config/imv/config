@@ -1,0 +1,3 @@
+[options]
+# Ajusta el tamaño a algo más pequeño, por ejemplo 12 o 14
+overlay_font = Monospace:12
