@@ -57,7 +57,8 @@ vim.api.nvim_create_autocmd("FileType", {
 				return
 			elseif file:match("%.tex$") then --revisar pues muestra archivo vacio
 				-- Usá "foot", "alacritty" o la terminal que tengas instalada
-				vim.fn.jobstart({ "foot", "nvim", ruta_absoluta }, { detach = true })
+				vim.cmd("vsplit " .. file)
+				-- vim.fn.jobstart({ "foot", "nvim", ruta_absoluta }, { detach = true })
 				return
 			elseif file:match("%.odt") then
 				-- Ejecuta xdg-open de fondo sin congelar Neovim
