@@ -6,7 +6,7 @@
 rclone.conf
 *.pem
 *.key
-*.local
+!*.local
 .netrc
 secrets.sh
 
