@@ -42,6 +42,11 @@ vim.api.nvim_create_autocmd("FileType", {
 				vim.fn.jobstart({ "zathura", ruta_absoluta }, { detach = true })
 				return
 			elseif file:match("^http") or file:match("^https") then
+				if file:match("youtube%.com") or file:match("youtu%.be") then
+					-- local url_limpia = file:gsub("[<>]", "")
+					vim.fn.jobstart({ "mpv", file }, { detach = true })
+					return
+				end
 				vim.fn.jobstart({ "qutebrowser", file }, { detach = true }) -- Las URLs quedan igual
 				return
 			elseif file:match("%.jpg$") or file:match("%.jpeg$") then
