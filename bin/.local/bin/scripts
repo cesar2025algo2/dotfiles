@@ -1,0 +1,15 @@
+#!/bin/bash
+# DESC: Muestra esta ayuda de scripts personales
+
+printf "%-20s %s\n" "COMANDO" "DESCRIPCIÓN"
+printf "%-20s %s\n" "-------" "-----------"
+
+for file in $(ls ~/.local/bin/); do
+    # Extrae la línea que empieza con # DESC:
+    desc=$(grep -m 1 "^# DESC:" "$HOME/.local/bin/$file" | cut -d: -f2- | sed 's/^ //')
+    if [ -n "$desc" ]; then
+        printf "\e[1;32m%-20s\e[0m %s\n" "$file" "$desc"
+    else
+        printf "\e[1;30m%-20s\e[0m %s\n" "$file" "(Sin descripción)"
+    fi
+done
