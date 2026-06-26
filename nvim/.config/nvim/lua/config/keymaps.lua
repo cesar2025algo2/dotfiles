@@ -37,3 +37,6 @@ end, { desc = "Generar TOC de Wikilinks" })
 vim.keymap.set("n", "<leader>nn", function()
 	utils.new_note()
 end, { desc = "New Note en 00_Inbox (Debe estar posicionado en vault)" })
+
+-- Abrir el índice general del Vault al toque con <leader>vi (Vault Index)
+vim.keymap.set("n", "<leader>gi", ":edit ~/uncuyo/vault/index.md<CR>", { desc = "Abrir Inicio del Vault" })
