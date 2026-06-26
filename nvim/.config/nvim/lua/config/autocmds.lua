@@ -99,6 +99,23 @@ vim.api.nvim_create_autocmd("FileType", {
 			-- 2. Si es un Wikilink normal o texto, dejamos que Neovim actúe normal.
 			-- Intentamos ejecutar la acción nativa de saltar al archivo (gf)
 			-- Si falla (porque es texto común), simplemente actúa como un Enter normal.
+			--
+			-- 2. Si no fue un link externo ni multimedia, manejamos los Wikilinks o texto común
+
+			-- Capturamos la línea actual y la posición del cursor para ver si estamos dentro de un [[Wikilink]]
+			local linea_actual = vim.api.nvim_get_current_line()
+			local col = vim.api.nvim_win_get_cursor(0)[2] + 1 -- Base 1 para Lua
+
+			-- Buscamos si el cursor está parado dentro de algo con [[ ]]
+			-- Una forma simple es ver si el archivo capturado viene de un wikilink o si la línea contiene corchetes
+			if file:match("^%[%[") or linea_actual:match("%[%[.-%]%]") then
+				-- Ejecutamos la acción nativa de ir a definición del LSP (lo mismo que hace gd)
+				local clientes_lsp = vim.lsp.get_clients({ bufnr = 0 })
+				if #clientes_lsp > 0 then
+					vim.lsp.buf.definition()
+					return
+				end
+			end
 			local status, _ = pcall(vim.cmd, "normal! gf")
 			if not status then
 				-- Si 'gf' da error porque no es una ruta, hacemos un Enter común (bajar de línea)
