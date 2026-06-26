@@ -1,0 +1,42 @@
+#!/bin/zsh
+
+YT_BOOKMARKS="$HOME/.local/share/youtube/bookmarks.txt"
+mkdir -p "$(dirname "$YT_BOOKMARKS")"
+
+case "$1" in
+    save|add)
+        url="${2:-$(wl-paste 2>/dev/null)}"
+        [[ -z "$url" ]] && { echo "No hay URL"; exit 1; }
+
+        title=$(timeout 8s yt-dlp --get-title --quiet --no-warnings --force-ipv4 "$url" 2>/dev/null || echo "Sin título $(date '+%Y-%m-%d')")
+        echo "$url # $title" >> "$YT_BOOKMARKS"
+        echo "✓ Guardado: $title"
+        ;;
+
+    play|*)
+        # Integra bookmarks + opción de buscar con ytsurf
+        echo "1) Mis Bookmarks"
+        echo "2) Buscar nuevo con ytsurf"
+        echo "3) Salir"
+        read -r choice
+
+        case $choice in
+            1)
+                selection=$(cat "$YT_BOOKMARKS" | 
+                    fzf --tac --no-sort \
+                        --prompt="Bookmarks > " \
+                        --preview='echo {} | cut -d"#" -f2-' \
+                        --bind 'enter:execute(mpv {1})' \
+                        | awk '{print $1}')
+                [[ -n "$selection" ]] && mpv "$selection"
+                ;;
+            2)
+                # Ejecuta ytsurf normalmente
+                ytsurf
+                ;;
+            *)
+                exit 0
+                ;;
+        esac
+        ;;
+esac

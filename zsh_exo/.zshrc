@@ -173,4 +173,45 @@ pickcolor() {
 
 # ==================== SECRETOS / API KEYS ====================
 [[ -f ~/.zsh_secrets ]] && source ~/.zsh_secrets
+# YouTube bookmarks (versión corregida)
+YT_BOOKMARKS="$HOME/.local/share/youtube/bookmarks.txt"
 
+yt-save() {
+    local url="${1:-$(wl-paste 2>/dev/null)}"
+
+    if [[ -z "$url" ]]; then
+        echo "No hay URL (ni en el clipboard)"
+        return 1
+    fi
+
+    echo "Guardando: $url"
+
+    # Extraer título con timeout y opciones más rápidas
+    local title
+    title=$(timeout 8s yt-dlp --get-title --no-warnings --quiet --force-ipv4 "$url" 2>/dev/null)
+
+    if [[ -z "$title" || "$title" == "ERROR:"* ]]; then
+        title="Sin título $(date '+%Y-%m-%d %H:%M')"
+    fi
+
+    echo "$url # $title" >> "$YT_BOOKMARKS"
+    echo "✓ Guardado: $title"
+}
+# Ver y reproducir con fzf
+# yt-play() {
+#     local selection=$(cat "$YT_BOOKMARKS" | fzf --tac --no-sort --exact --prompt="YouTube > " --preview='echo {}' | awk '{print $1}')
+#     [[ -n "$selection" ]] && mpv "$selection"
+# }
+yt-play() {
+    local selection=$(cat "$YT_BOOKMARKS" | 
+        fzf --tac --no-sort \
+            --prompt="YouTube > " \
+            --preview='echo {} | cut -d"#" -f2-' \
+            --bind 'enter:execute(mpv {1})' \
+            | awk '{print $1}')
+}
+# Ver y descargar
+yt-dl-bookmark() {
+    local selection=$(cat "$YT_BOOKMARKS" | fzf --tac --no-sort --exact --prompt="Descargar > " | awk '{print $1}')
+    [[ -n "$selection" ]] && yt-dlp -f 'bestvideo[height<=1080]+bestaudio/best' "$selection"
+}
