@@ -1,4 +1,5 @@
 #!/bin/zsh
+# DESC: ver videos, obtener url y guardar en bookmark
 
 YT_BOOKMARKS="$HOME/.local/share/youtube/bookmarks.txt"
 mkdir -p "$(dirname "$YT_BOOKMARKS")"
@@ -17,7 +18,8 @@ case "$1" in
         # Integra bookmarks + opción de buscar con ytsurf
         echo "1) Mis Bookmarks"
         echo "2) Buscar nuevo con ytsurf"
-        echo "3) Salir"
+        echo "3) Extraer url"
+        echo "4) Salir"
         read -r choice
 
         case $choice in
@@ -33,6 +35,10 @@ case "$1" in
             2)
                 # Ejecuta ytsurf normalmente
                 ytsurf
+                ;;
+            3)
+                # Ejecuta ytsurf y cuando selecciona un video, copia la url al clipboard
+                ytsurf --copy-url
                 ;;
             *)
                 exit 0
