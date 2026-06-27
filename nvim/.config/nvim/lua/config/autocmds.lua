@@ -56,11 +56,11 @@ vim.api.nvim_create_autocmd("FileType", {
 			elseif file:match("%.mp4$") then
 				vim.fn.jobstart({ "mpv", ruta_absoluta }, { detach = true })
 				return
-			elseif file:match("%.tex$") then --revisar pues muestra archivo vacio
-				-- Usá "foot", "alacritty" o la terminal que tengas instalada
-				vim.cmd("vsplit " .. file)
-				-- vim.fn.jobstart({ "foot", "nvim", ruta_absoluta }, { detach = true })
-				return
+			-- elseif file:match("%.tex$") then --revisar pues muestra archivo vacio
+			-- 	-- Usá "foot", "alacritty" o la terminal que tengas instalada
+			-- 	vim.cmd("vsplit " .. file)
+			-- 	-- vim.fn.jobstart({ "foot", "nvim", ruta_absoluta }, { detach = true })
+			-- 	return
 			elseif file:match("%.odt") then
 				-- Ejecuta xdg-open de fondo sin congelar Neovim
 				vim.fn.jobstart({ "xdg-open", file }, { detach = true })
