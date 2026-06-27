@@ -14,6 +14,7 @@ autocmd("TextYankPost", {
 	end,
 })
 
+-- Limpia espacios en blanco al final de la linea
 autocmd("BufWritePre", {
 	desc = "Limpiar espacios en blanco al final de la línea",
 	pattern = { "*.c", "*.cpp", "*.lua", "*.py", "*.sh", "*.tex" },
