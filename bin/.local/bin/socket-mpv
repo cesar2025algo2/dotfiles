@@ -1,0 +1,38 @@
+#!/bin/zsh
+# DESC: Obtiene los metadatos del video que se esta reproduciendo en mpv
+# Definir la ruta del socket
+SOCKET="/run/user/$(id -u)/mpv.sock"
+
+# Verificar si el socket existe
+if [[ ! -S "$SOCKET" ]]; then
+    echo "Error: El socket de mpv no está activo en $SOCKET"
+    exit 1
+fi
+
+# Función para enviar comandos al socket
+send_command() {
+    # El comando debe terminar en un salto de línea (
+#)
+    # Convertimos a JSON y enviamos mediante socat
+    echo "$1" | socat - "$SOCKET"
+}
+
+# 1. Obtener el título (ejemplo de comando JSON)
+echo "Obteniendo metadatos..."
+
+# Comando para obtener la propiedad 'media-title'
+CMD='{ "command": ["get_property", "media-title"] }'
+TITLE=$(send_command "$CMD" | jq -r '.data // "Sin título"')
+
+# Comando para obtener la duración
+CMD_DUR='{ "command": ["get_property", "duration"] }'
+DURATION=$(send_command "$CMD_DUR" | jq -r '.data // 0')
+
+echo "Reproduciendo: $TITLE"
+echo "Duración: ${DURATION}s"
+
+
+send_command() {
+    # Enviamos el comando JSON y cerramos el canal de escritura para que socat termine tras recibir la respuesta
+    echo "$1" | socat - "UNIX-CONNECT:$SOCKET,end-close"
+}
