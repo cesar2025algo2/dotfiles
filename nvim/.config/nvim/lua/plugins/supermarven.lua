@@ -1,4 +1,4 @@
--- ~/.config/nvim/lua/plugins/gemini.lua
+-- ~/.config/nvim/lua/plugins/supermarven.lua
 return {
 	{
 		"supermaven-inc/supermaven-nvim",
