@@ -1,0 +1,290 @@
+#!/usr/bin/env zsh
+
+# Script para reorganizar sin borrar archivos originales
+# Crea symlinks en la nueva estructura apuntando a los archivos originales
+
+ORIGINAL="$HOME/uncuyo/2_Materias/cursos/algoritmo_y_estructura_de_datos_2"
+NUEVA="$HOME/uncuyo/2_Materias/2026-1C/Algoritmos_y_Estructuras_de_Datos_2"
+
+mkdir -p "$NUEVA"
+
+# Función para crear symlink
+link_file() {
+    local src="$1"
+    local dst="$2"
+    mkdir -p "$(dirname "$dst")"
+    ln -sf "$src" "$dst"
+    echo "  ✓ $(basename "$dst")"
+}
+
+echo "📁 Creando nueva estructura organizada..."
+echo ""
+
+# ============================================
+# 00 - Recursos generales
+# ============================================
+mkdir -p "$NUEVA/00-recursos"
+
+# Bibliografía Cormen
+[[ -f "$ORIGINAL/algorithm-data-structure--bibliografia--introduction-to-algorithms-cormen.pdf" ]] && \
+    link_file "$ORIGINAL/algorithm-data-structure--bibliografia--introduction-to-algorithms-cormen.pdf" "$NUEVA/00-recursos/cormen-introduction-to-algorithms.pdf"
+
+# ============================================
+# Unidad 07 - Introducción
+# ============================================
+mkdir -p "$NUEVA/01-introduccion"
+[[ -f "$ORIGINAL/algorithm-data-structure--u07-intro-algo2--intro-2022.pdf" ]] && \
+    link_file "$ORIGINAL/algorithm-data-structure--u07-intro-algo2--intro-2022.pdf" "$NUEVA/01-introduccion/slides.pdf"
+[[ -f "$ORIGINAL/algorithm-data-structure--u07-intro-algo2--evaluacion-introductorioa.pdf" ]] && \
+    link_file "$ORIGINAL/algorithm-data-structure--u07-intro-algo2--evaluacion-introductorioa.pdf" "$NUEVA/01-introduccion/diagnostico.pdf"
+[[ -f "$ORIGINAL/algorithm-data-structure--u07-intro-algo2--complemento-git.pdf" ]] && \
+    link_file "$ORIGINAL/algorithm-data-structure--u07-intro-algo2--complemento-git.pdf" "$NUEVA/01-introduccion/git-para-la-materia.pdf"
+[[ -f "$ORIGINAL/algorithm-data-structure--git-hub.md" ]] && \
+    link_file "$ORIGINAL/algorithm-data-structure--git-hub.md" "$NUEVA/01-introduccion/git-hub.md"
+
+# ============================================
+# Unidad 08 - Complejidad
+# ============================================
+mkdir -p "$NUEVA/02-complejidad"
+for f in "$ORIGINAL"/algorithm-data-structure--u08-analisis-complejidad--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/02-complejidad/$(basename "$f" | sed 's/algorithm-data-structure--u08-analisis-complejidad--//')"
+done
+for f in "$ORIGINAL"/algorithm-data-structure--u08-analisis-complejidad--*.mp4; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/02-complejidad/$(basename "$f" | sed 's/algorithm-data-structure--u08-analisis-complejidad--//')"
+done
+
+# ============================================
+# Unidad 09 - Árboles
+# ============================================
+mkdir -p "$NUEVA/03-arboles/avl"
+mkdir -p "$NUEVA/03-arboles/trie"
+mkdir -p "$NUEVA/03-arboles/trie/code"
+mkdir -p "$NUEVA/03-arboles/btree"
+
+# AVL - PDFs
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--avl-tree--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/avl/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--avl-tree--//')"
+done
+
+# AVL - MP4s
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--avl-tree--*.mp4; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/avl/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--avl-tree--//')"
+done
+
+# AVL - MDs
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--avl-tree--*.md; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/avl/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--avl-tree--//')"
+done
+
+# Trie - PDFs
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--n-ario-tree--trie--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/trie/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--n-ario-tree--trie--//')"
+done
+
+# Trie - MP4s
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--n-ario-tree--trie--*.mp4; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/trie/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--n-ario-tree--trie--//')"
+done
+
+# Trie - MDs
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--n-ario-tree--trie--*.md; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/trie/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--n-ario-tree--trie--//')"
+done
+
+# Trie - Código
+for f in "$ORIGINAL"/algorithm-data-structure--exercize--trie--code--*.py; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/trie/code/$(basename "$f" | sed 's/algorithm-data-structure--exercize--trie--code--//')"
+done
+
+# B-Tree - PDFs
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--n-ario-tree--b-tree--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/btree/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--n-ario-tree--b-tree--//')"
+done
+
+# B-Tree - MDs
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--n-ario-tree--b-tree--*.md; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/btree/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--n-ario-tree--b-tree--//')"
+done
+
+# B-Tree - Código
+for f in "$ORIGINAL"/algorithm-data-structure--u09-tree--n-ario-tree--b-tree--*.py; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/03-arboles/btree/$(basename "$f" | sed 's/algorithm-data-structure--u09-tree--n-ario-tree--b-tree--//')"
+done
+
+# ============================================
+# Unidad 10 - Hash Tables
+# ============================================
+mkdir -p "$NUEVA/04-hash-tables"
+for f in "$ORIGINAL"/algorithm-data-structure--u10-hash-table--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/04-hash-tables/$(basename "$f" | sed 's/algorithm-data-structure--u10-hash-table--//')"
+done
+for f in "$ORIGINAL"/algorithm-data-structure--u10-hash-table--*.mp4; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/04-hash-tables/$(basename "$f" | sed 's/algorithm-data-structure--u10-hash-table--//')"
+done
+for f in "$ORIGINAL"/algorithm-data-structure--u10-hash-table--*.md; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/04-hash-tables/$(basename "$f" | sed 's/algorithm-data-structure--u10-hash-table--//')"
+done
+
+# ============================================
+# Unidad 11 - Grafos
+# ============================================
+mkdir -p "$NUEVA/05-grafos"
+mkdir -p "$NUEVA/05-grafos/code"
+mkdir -p "$NUEVA/05-grafos/extra"
+
+# Grafos - PDFs
+for f in "$ORIGINAL"/algorithm-data-structure--u11-graphs--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/05-grafos/$(basename "$f" | sed 's/algorithm-data-structure--u11-graphs--//')"
+done
+
+# Grafos - MDs
+for f in "$ORIGINAL"/algorithm-data-structure--u11-graphs--*.md; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/05-grafos/$(basename "$f" | sed 's/algorithm-data-structure--u11-graphs--//')"
+done
+
+# Grafos - TXT (gemini)
+for f in "$ORIGINAL"/algorithm-data-structure--u11-graphs--*.txt; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/05-grafos/extra/$(basename "$f" | sed 's/algorithm-data-structure--u11-graphs--//')"
+done
+
+# Grafos - Código (TP)
+for f in "$ORIGINAL"/algorithm-data-structure--u11-graphs--*.py; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/05-grafos/code/$(basename "$f" | sed 's/algorithm-data-structure--u11-graphs--//')"
+done
+
+# ============================================
+# Unidad 12 - Pattern Matching
+# ============================================
+mkdir -p "$NUEVA/06-pattern-matching"
+for f in "$ORIGINAL"/algorithm-data-structure--u12-pattern-matching--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/06-pattern-matching/$(basename "$f" | sed 's/algorithm-data-structure--u12-pattern-matching--//')"
+done
+for f in "$ORIGINAL"/algorithm-data-structure--u12-pattern-matching--*.md; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/06-pattern-matching/$(basename "$f" | sed 's/algorithm-data-structure--u12-pattern-matching--//')"
+done
+
+# ============================================
+# Unidad 13 - Análisis y Diseño de Algoritmos
+# ============================================
+mkdir -p "$NUEVA/07-algoritmos"
+for f in "$ORIGINAL"/algorithm-data-structure--u13-analisis-y-diseno-de-algoritmos--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/07-algoritmos/$(basename "$f" | sed 's/algorithm-data-structure--u13-analisis-y-diseno-de-algoritmos--//')"
+done
+for f in "$ORIGINAL"/algorithm-data-structure--u13-analisis-y-diseno-de-algoritmos--*.md; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/07-algoritmos/$(basename "$f" | sed 's/algorithm-data-structure--u13-analisis-y-diseno-de-algoritmos--//')"
+done
+
+# ============================================
+# Extra
+# ============================================
+mkdir -p "$NUEVA/99-extra"
+
+# Archivos de GitHub
+for f in "$ORIGINAL"/algorithm-data-structure--git-hub--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/99-extra/$(basename "$f" | sed 's/algorithm-data-structure--git-hub--//')"
+done
+
+# Cualquier otro PDF suelto que no esté en las unidades
+for f in "$ORIGINAL"/algorithm-data-structure--*.pdf; do
+    # Saltar los que ya están en las carpetas organizadas
+    if [[ ! "$f" =~ "u07|u08|u09|u10|u11|u12|u13|u14|bibliografia|git-hub" ]]; then
+        [[ -f "$f" ]] && link_file "$f" "$NUEVA/99-extra/$(basename "$f" | sed 's/algorithm-data-structure--//')"
+    fi
+done
+
+# Cualquier otro MD suelto
+for f in "$ORIGINAL"/algorithm-data-structure--*.md; do
+    if [[ ! "$f" =~ "u07|u08|u09|u10|u11|u12|u13|u14|bibliografia|git-hub|exercize" ]]; then
+        [[ -f "$f" ]] && link_file "$f" "$NUEVA/99-extra/$(basename "$f" | sed 's/algorithm-data-structure--//')"
+    fi
+done
+
+# ============================================
+# Ejercicios
+# ============================================
+mkdir -p "$NUEVA/98-ejercicios"
+mkdir -p "$NUEVA/98-ejercicios/code"
+
+# Ejercicios MD
+for f in "$ORIGINAL"/algorithm-data-structure--exercize--*.md; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/98-ejercicios/$(basename "$f" | sed 's/algorithm-data-structure--exercize--//')"
+done
+
+# Ejercicios PDF
+for f in "$ORIGINAL"/algorithm-data-structure--exercize--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/98-ejercicios/$(basename "$f" | sed 's/algorithm-data-structure--exercize--//')"
+done
+
+# Código de ejercicios (AVL, etc.)
+for f in "$ORIGINAL"/algorithm-data-structure--exercize--avl-tree--code--*.py; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/98-ejercicios/code/$(basename "$f" | sed 's/algorithm-data-structure--exercize--avl-tree--code--//')"
+done
+
+# Código de ejercicios de grafos (problemas)
+for f in "$ORIGINAL"/algorithm-data-structure--exercize--problem--*.pdf; do
+    [[ -f "$f" ]] && link_file "$f" "$NUEVA/98-ejercicios/$(basename "$f" | sed 's/algorithm-data-structure--exercize--problem--//')"
+done
+
+# ============================================
+# README principal
+# ============================================
+cat > "$NUEVA/README.md" << 'EOF'
+# Algoritmos y Estructuras de Datos II
+
+## 📚 Unidades
+
+### [00 - Recursos Generales](00-recursos/)
+- [Cormen - Introduction to Algorithms](00-recursos/cormen-introduction-to-algorithms.pdf)
+
+### [01 - Introducción](01-introduccion/)
+- [Slides](01-introduccion/slides.pdf)
+- [Diagnóstico](01-introduccion/diagnostico.pdf)
+- [Git para la materia](01-introduccion/git-para-la-materia.pdf)
+
+### [02 - Complejidad](02-complejidad/)
+- [Introducción](02-complejidad/01-complejidad-intro.pdf)
+- [Método Maestro](02-complejidad/02-complejidad-metodo-maestro.pdf)
+- [Apunte](02-complejidad/03-complejidad-apunte.pdf)
+- [Video: Método Maestro](02-complejidad/04-complejidad-recursiones-metodo-maestro.mp4)
+
+### [03 - Árboles](03-arboles/)
+- [AVL](03-arboles/avl/)
+- [Trie](03-arboles/trie/)
+- [B-Tree](03-arboles/btree/)
+
+### [04 - Hash Tables](04-hash-tables/)
+
+### [05 - Grafos](05-grafos/)
+
+### [06 - Pattern Matching](06-pattern-matching/)
+
+### [07 - Análisis y Diseño de Algoritmos](07-algoritmos/)
+
+### [98 - Ejercicios](98-ejercicios/)
+
+### [99 - Material Extra](99-extra/)
+
+---
+
+## 🔍 Navegación rápida
+
+- **Buscar en toda la materia**: `<leader>fa` (si configuraste el keymap)
+- **Navegar estructura**: `<leader>e` (oil.nvim)
+- **Buscar texto**: `/palabra` o `:Telescope live_grep`
+
+---
+
+## 📝 Notas
+
+- Última actualización: $(date)
+- Estructura generada automáticamente desde archivos originales
+- Los archivos son symlinks a la carpeta original
+EOF
+
+echo ""
+echo "✅ Estructura organizada creada en: $NUEVA"
+echo "📌 Los archivos originales permanecen intactos"
+echo "🔗 Se crearon symlinks a los archivos originales"
+echo ""
+echo "📂 Estructura creada:"
+tree -L 2 "$NUEVA" 2>/dev/null || ls -la "$NUEVA"
