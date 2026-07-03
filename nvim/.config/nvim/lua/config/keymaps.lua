@@ -45,17 +45,20 @@ vim.keymap.set("n", "<leader>gi", ":edit ~/uncuyo/README.md<CR>", { desc = "Abri
 vim.keymap.set("n", "<leader>zn", utils.new_zettel_note, { desc = "[Z]ettel [N]ueva nota" })
 
 -- Interceptar la apertura de enlaces a directorios locales
-vim.keymap.set("n", "gx", function()
-	-- Obtener la palabra/enlace bajo el cursor de forma segura
-	local file = vim.fn.expand("<cfile>")
+vim.keymap.set("n", "gx", utils.open_link, { desc = "Abrir link (Directorios en Oil)" })
 
-	-- Verificar si es un directorio local válido
-	if vim.fn.isdirectory(file) == 1 then
-		-- Abrir el directorio usando la API de Oil
-		require("oil").open(file)
-	else
-		-- Si no es un directorio (es un link web o un archivo),
-		-- mantener el comportamiento nativo de Neovim/gx
-		vim.cmd("normal! gx")
-	end
-end, { desc = "Abrir link (Directorios en Oil)" })
+-- -- Interceptar la apertura de enlaces a directorios locales
+-- vim.keymap.set("n", "gx", function()
+-- 	-- Obtener la palabra/enlace bajo el cursor de forma segura
+-- 	local file = vim.fn.expand("<cfile>")
+--
+-- 	-- Verificar si es un directorio local válido
+-- 	if vim.fn.isdirectory(file) == 1 then
+-- 		-- Abrir el directorio usando la API de Oil
+-- 		require("oil").open(file)
+-- 	else
+-- 		-- Si no es un directorio (es un link web o un archivo),
+-- 		-- mantener el comportamiento nativo de Neovim/gx
+-- 		vim.cmd("normal! gx")
+-- 	end
+-- end, { desc = "Abrir link (Directorios en Oil)" })

@@ -382,4 +382,20 @@ function M.new_inbox_note()
 	vim.api.nvim_win_set_cursor(0, { #template, 0 })
 end
 
+-- Abrir archivo usando la api de oil
+function M.open_link()
+	-- Obtener la palabra/enlace bajo el cursor de forma segura
+	local file = vim.fn.expand("<cfile>")
+
+	-- Verificar si es un directorio local válido
+	if vim.fn.isdirectory(file) == 1 then
+		-- Abrir el directorio usando la API de Oil
+		require("oil").open(file)
+	else
+		-- Si no es un directorio (es un link web o un archivo),
+		-- mantener el comportamiento nativo de Neovim/gx
+		vim.cmd("normal! gx")
+	end
+end
+
 return M
