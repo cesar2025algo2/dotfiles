@@ -20,7 +20,7 @@ return {
 			"~/work/*",
 			"~/estudio/*",
 			"~/.config/nvim*", -- El asterisco agarra nvim y nvim-test4
-			"~/uncuyo/*",
+			"~/uncuyo/",
 		},
 		picker = {
 			type = "fzf-lua",

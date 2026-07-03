@@ -113,36 +113,6 @@ return {
 			desc = "[f]ind co[m]mands",
 		},
 		-- los siguientes son para usar en el vault
-		{
-			"<leader>fvt",
-			function()
-				require("fzf-lua").live_grep({
-					cwd = "./01_Notes",
-					prompt = "Notes Text> ",
-				})
-			end,
-			desc = "Buscar texto en 01_Notes",
-		},
-		{
-			"<leader>fva",
-			function()
-				require("fzf-lua").files({
-					cwd = "./03_Attachments",
-					prompt = "Attachments>",
-				})
-			end,
-			desc = "Buscar solo Adjuntos",
-		},
-		{
-			"<leader>fvn",
-			function()
-				require("fzf-lua").files({
-					cwd = "./01_Notes",
-					prompt = "Notes>",
-				})
-			end,
-			desc = "Buscar files solo en Notes",
-		},
 		-- Buscar TEXTO en todo el Vault (Notas y Proyectos), ignorando carpetas de binarios/adjuntos
 		{
 			"<leader>fvi",
@@ -161,6 +131,7 @@ return {
 			"<leader>fvt",
 			function()
 				require("fzf-lua").grep({
+					cwd = "~/uncuyo",
 					cwd = "./01_Notes",
 					prompt = "Valor de Tag> ",
 					search = "^tags:.*", -- busca cualquier tag
@@ -177,7 +148,7 @@ return {
 			"<leader>fvl",
 			function()
 				require("fzf-lua").grep({
-					cwd = "./01_Notes",
+					cwd = "~/uncuyo",
 					prompt = "Alias en Frontmatter> ",
 					search = "^aliases:",
 					no_esc = true,
@@ -193,7 +164,7 @@ return {
 			"<leader>fve", -- por ejemplo: find headings
 			function()
 				require("fzf-lua").grep({
-					cwd = "./01_Notes",
+					cwd = "~/uncuyo",
 					prompt = "Buscar en Encabezados> ",
 					search = "^#", -- regex: una o más # al inicio de línea
 					no_esc = true,
@@ -202,6 +173,219 @@ return {
 				})
 			end,
 			desc = "Buscar solo en [H]eading",
+		},
+		-- ============================================
+		-- MEJORAS PARA ZETTELKASTEN CON FZF-LUA
+		-- ============================================
+
+		-- 2. Insertar enlace con autocompletado (usando fzf-lua)
+		{
+			"<leader>zi",
+			function()
+				require("fzf-lua").files({
+					cwd = "./6_Zettelkasten",
+					prompt = "🔗 Enlazar a> ",
+					actions = {
+						default = function(selected)
+							local path = selected[1]
+							if path == nil then
+								return
+							end
+							local name = vim.fn.fnamemodify(path, ":t:r")
+							-- Remover el ID (YYYYMMDDHHMM_) del nombre para el enlace
+							local display_name = name:gsub("^%d+_", "")
+							vim.cmd("normal i[[" .. display_name .. "]]")
+						end,
+					},
+				})
+			end,
+			desc = "[Z]ettel [I]nsertar enlace",
+		},
+		-- Buscar en Inbox
+		{
+			"<leader>fi",
+			function()
+				require("fzf-lua").files({
+					cwd = "./0_Inbox",
+					prompt = "📥 Inbox> ",
+				})
+			end,
+			desc = "[F]ind en [I]nbox",
+		},
+		-- Buscar en Materias
+		{
+			"<leader>fm",
+			function()
+				require("fzf-lua").files({
+					cwd = "./2_Materias",
+					prompt = "📖 Materias> ",
+				})
+			end,
+			desc = "[F]ind en [M]aterias",
+		},
+		-- Buscar en Recursos
+		{
+			"<leader>fr",
+			function()
+				require("fzf-lua").files({
+					cwd = "./1_Recursos",
+					prompt = "🔧 Recursos> ",
+				})
+			end,
+			desc = "[F]ind en [R]ecursos",
+		},
+
+		-- Buscar en todo el vault
+		{
+			"<leader>fv",
+			function()
+				require("fzf-lua").files({
+					cwd = "~/uncuyo",
+					prompt = "📚 Vault> ",
+				})
+			end,
+			desc = "[F]ind en [V]ault",
+		},
+
+		-- 4. Buscar tags específicas en "6_Zettelkasten" (mejora de tu configuración actual)
+		{
+			"<leader>zt",
+			function()
+				local tag = vim.fn.input("Tag a buscar: ")
+				if tag == "" then
+					return
+				end
+				require("fzf-lua").grep({
+					cwd = "./6_Zettelkasten",
+					prompt = "🏷️ Tag: " .. tag .. "> ",
+					search = "^tags:.*" .. tag .. ".*",
+					no_esc = true,
+					glob = "**/*.md",
+					rg_opts = "--smart-case --no-heading --line-number --color=always ",
+				})
+			end,
+			desc = "[Z]ettel buscar [T]ag",
+		},
+
+		-- 4. Buscar tags específicas en todo el vault (mejora de tu configuración actual)
+		-- simil `<leader>ftv`
+		{
+			"<leader>zs",
+			function()
+				local tag = vim.fn.input("Tag a buscar: ")
+				if tag == "" then
+					return
+				end
+				require("fzf-lua").grep({
+					cwd = ".",
+					prompt = "🏷️ Tag: " .. tag .. "> ",
+					search = "^tags:.*" .. tag .. ".*",
+					no_esc = true,
+					glob = "**/*.md",
+					rg_opts = "--smart-case --no-heading --line-number --color=always ",
+				})
+			end,
+			desc = "[Z]ettel buscar [T]ag",
+		},
+
+		-- 5. Buscar notas que enlazan a la actual (notas entrantes)
+		{
+			"<leader>zg",
+			function()
+				-- Obtener el nombre del archivo actual sin extensión
+				local current = vim.fn.expand("%:t:r")
+				-- Remover el ID para la búsqueda
+				local name = current:gsub("^%d+_", "")
+				require("fzf-lua").grep({
+					cwd = "./6_Zettelkasten",
+					prompt = "🔗 Notas que enlazan a: " .. name .. "> ",
+					search = "[[" .. name .. "]]",
+					no_esc = true,
+					glob = "**/*.md",
+					rg_opts = "--smart-case --no-heading --line-number --color=always ",
+				})
+			end,
+			desc = "[Z]ettel [G]rep enlaces entrantes",
+		},
+
+		-- 6. Encontrar notas sin enlaces (huérfanas)
+		{
+			"<leader>zu",
+			function()
+				-- Buscar todas las notas que no tienen enlaces salientes
+				require("fzf-lua").grep({
+					cwd = "./6_Zettelkasten",
+					prompt = "🔗 Notas huérfanas> ",
+					search = "^#", -- Simplificado: mostrar notas que solo tienen título
+					no_esc = true,
+					glob = "**/*.md",
+					rg_opts = "--smart-case --no-heading --line-number --color=always ",
+				})
+			end,
+			desc = "[Z]ettel [U]nlinked notes",
+		},
+
+		-- 7. Buscar en todo el Zettelkasten (tus notas atómicas)
+		{
+			"<leader>zz",
+			function()
+				require("fzf-lua").files({
+					cwd = "./6_Zettelkasten",
+					prompt = "📚 Zettelkasten> ",
+				})
+			end,
+			desc = "[F]ind en [Z]ettelkasten",
+		},
+		-- Buscar solo archivos Markdown en el vault
+		{
+			"<leader>fvm",
+			function()
+				require("fzf-lua").files({
+					cwd = "~/uncuyo",
+					prompt = "📝 Markdown> ",
+					fd_opts = "--type f --extension md",
+				})
+			end,
+			desc = "[F]ind en [V]ault [M]arkdown",
+		},
+
+		-- Buscar solo archivos PDF en el vault
+		{
+			"<leader>fvp",
+			function()
+				require("fzf-lua").files({
+					cwd = "~/uncuyo",
+					prompt = "📄 PDFs> ",
+					fd_opts = "--type f --extension pdf",
+				})
+			end,
+			desc = "[F]ind en [V]ault [P]DFs",
+		},
+
+		-- Buscar solo archivos TeX en el vault
+		{
+			"<leader>fvx",
+			function()
+				require("fzf-lua").files({
+					cwd = "~/uncuyo",
+					prompt = "📐 TeX> ",
+					fd_opts = "--type f --extension tex",
+				})
+			end,
+			desc = "[F]ind en [V]ault [T]eX",
+		},
+
+		-- Buscar solo código (Python, C, etc.)
+		{
+			"<leader>fvc",
+			function()
+				require("fzf-lua").files({
+					cwd = "~/uncuyo",
+					prompt = "💻 Code> ",
+					fd_opts = "--type f --extension py --extension c --extension cpp --extension java --extension go",
+				})
+			end,
+			desc = "[F]ind en [V]ault [C]ódigo",
 		},
 	},
 }

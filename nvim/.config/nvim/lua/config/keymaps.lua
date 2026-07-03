@@ -33,10 +33,29 @@ vim.keymap.set("n", "<leader>wl", function()
 	utils.generate_wikilink_toc()
 end, { desc = "Generar TOC de Wikilinks" })
 
--- Crear una nota nueva automáticamente en 00_Inbox con Frontmatter (debe estar posicionado en vault)
+-- Crear una nota nueva automáticamente en 0_Inbox con Frontmatter (debe estar posicionado en vault)
 vim.keymap.set("n", "<leader>nn", function()
-	utils.new_note()
-end, { desc = "New Note en 00_Inbox (Debe estar posicionado en vault)" })
+	utils.new_inbox_note()
+end, { desc = "New Note en 0_Inbox" })
 
 -- Abrir el índice general del Vault al toque con <leader>vi (Vault Index)
-vim.keymap.set("n", "<leader>gi", ":edit ~/uncuyo/vault/index.md<CR>", { desc = "Abrir Inicio del Vault" })
+vim.keymap.set("n", "<leader>gi", ":edit ~/uncuyo/README.md<CR>", { desc = "Abrir Inicio del Vault" })
+
+-- Nueva nota Zettelkasten (NO usa fzf-lua)
+vim.keymap.set("n", "<leader>zn", utils.new_zettel_note, { desc = "[Z]ettel [N]ueva nota" })
+
+-- Interceptar la apertura de enlaces a directorios locales
+vim.keymap.set("n", "gx", function()
+	-- Obtener la palabra/enlace bajo el cursor de forma segura
+	local file = vim.fn.expand("<cfile>")
+
+	-- Verificar si es un directorio local válido
+	if vim.fn.isdirectory(file) == 1 then
+		-- Abrir el directorio usando la API de Oil
+		require("oil").open(file)
+	else
+		-- Si no es un directorio (es un link web o un archivo),
+		-- mantener el comportamiento nativo de Neovim/gx
+		vim.cmd("normal! gx")
+	end
+end, { desc = "Abrir link (Directorios en Oil)" })

@@ -1,4 +1,5 @@
 -- ~/.config/nvim/lua/config/utils.lua
+-- Funciones de utilidad (NO dependen de plugins)
 local M = {}
 
 -- funcion que ejecuta el codigo actual en una ventana dedicada
@@ -221,56 +222,163 @@ end
 -- 	end
 -- end
 
--- Crear una nota nueva automáticamente en 00_Inbox con Frontmatter
--- Importante es posicionado en vault
-function M.new_note()
-	-- 1. Pedir el título de la nota al usuario
+-- -- Crear una nota nueva automáticamente en 00_Inbox con Frontmatter
+-- -- Importante es posicionado en vault
+-- -- ACTUALIZAR!
+-- function M.new_note()
+-- 	-- 1. Pedir el título de la nota al usuario
+-- 	local titulo = vim.fn.input("Nombre de la nueva nota: ")
+-- 	if titulo == "" then
+-- 		print("\nCreación cancelada.")
+-- 		return
+-- 	end
+--
+-- 	-- 2. Sanitizar el nombre del archivo
+-- 	local nombre_archivo = titulo:gsub("%s+", "-"):lower() .. ".md"
+--
+-- 	-- -- --- VALIDACIÓN COMPACTA EN MÚLTIPLES CARPETAS ---
+-- 	-- -- Agrupamos las carpetas donde queremos buscar que no se repita
+-- 	-- local carpetas_vault = { "0_Inbox/" } -- , "01_Notes/", "02_Projects/" }
+-- 	-- local fs = vim.uv or vim.loop
+-- 	--
+-- 	-- for _, carpeta in ipairs(carpetas_vault) do
+-- 	-- 	local ruta_chequeo = carpeta .. nombre_archivo
+-- 	-- 	if fs.fs_stat(ruta_chequeo) then
+-- 	-- 		-- Usamos string.format para que el mensaje te diga la carpeta exacta dinámicamente
+-- 	-- 		print(string.format("\n⚠️ ¡Error! Ya existe una nota con ese nombre en %s", carpeta))
+-- 	-- 		return
+-- 	-- 	end
+-- 	-- end
+--
+-- 	local ruta_completa = "0_Inbox/" .. nombre_archivo
+--
+-- 	-- 3. Generar el ID único basado en el tiempo actual (Ej: 202606191305)
+-- 	local id_timestamp = os.date("%Y%m%d%H%M")
+--
+-- 	-- 4. Definir la plantilla del Frontmatter
+-- 	local template = {
+-- 		"---",
+-- 		"id: " .. id_timestamp,
+-- 		"aliases: []",
+-- 		"tags: []",
+-- 		"---",
+-- 		"# " .. titulo,
+-- 		"",
+-- 		"",
+-- 	}
+--
+-- 	-- 6. Abrir el archivo en un buffer de Neovim
+-- 	vim.cmd("edit " .. ruta_completa)
+--
+-- 	-- 7. Inyectar el template de forma segura
+-- 	vim.api.nvim_buf_set_lines(0, 0, -1, false, template)
+--
+-- 	-- Mover el cursor al final del archivo para empezar a escribir derecho viejo
+-- 	vim.api.nvim_win_set_cursor(0, { #template, 0 })
+-- end
+--
+
+function M.new_zettel_note()
+	local title = vim.fn.input("Título de la nota: ")
+	if title == "" then
+		print("\nCreación cancelada.")
+		return
+	end
+
+	local date = os.date("%Y%m%d%H%M")
+	local year = os.date("%Y")
+	local slug = title:gsub("%s+", "-"):lower()
+	local filename = string.format("./6_Zettelkasten/%s/%s-%s.md", year, date, slug)
+
+	if vim.uv.fs_stat(filename) then
+		print("\n⚠️ ¡Error! Ya existe una nota con ese título")
+		return
+	end
+
+	-- USANDO [=[ ]=] PARA EVITAR PROBLEMAS CON [[ ]]
+	local template = string.format(
+		[=[
+---
+id: %s
+title: %s
+tags: []
+fecha: %s
+tipo: permanente
+---
+
+# %s
+
+## Contexto
+> ¿Qué me llevó a escribir esto?
+
+## Contenido
+> Una idea atómica, clara y concisa
+
+
+## Conexiones
+- [[ ]] ← Notas relacionadas
+
+## Fuentes
+-
+
+## Reflexión
+> ¿Por qué es importante esta idea?
+]=],
+		date,
+		title,
+		os.date("%Y-%m-%d"),
+		title
+	)
+
+	vim.cmd("edit " .. filename)
+	vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(template, "\n"))
+	vim.cmd("normal /## Contenido\rj")
+end
+
+function M.new_inbox_note()
 	local titulo = vim.fn.input("Nombre de la nueva nota: ")
 	if titulo == "" then
 		print("\nCreación cancelada.")
 		return
 	end
 
-	-- 2. Sanitizar el nombre del archivo
-	local nombre_archivo = titulo:gsub("%s+", "-"):lower() .. ".md"
-
-	-- --- VALIDACIÓN COMPACTA EN MÚLTIPLES CARPETAS ---
-	-- Agrupamos las carpetas donde queremos buscar que no se repita
-	local carpetas_vault = { "00_Inbox/", "01_Notes/", "02_Projects/" }
-	local fs = vim.uv or vim.loop
-
-	for _, carpeta in ipairs(carpetas_vault) do
-		local ruta_chequeo = carpeta .. nombre_archivo
-		if fs.fs_stat(ruta_chequeo) then
-			-- Usamos string.format para que el mensaje te diga la carpeta exacta dinámicamente
-			print(string.format("\n⚠️ ¡Error! Ya existe una nota con ese nombre en %s", carpeta))
-			return
-		end
-	end
-
-	local ruta_completa = "00_Inbox/" .. nombre_archivo
-	-- 3. Generar el ID único basado en el tiempo actual (Ej: 202606191305)
 	local id_timestamp = os.date("%Y%m%d%H%M")
 
-	-- 4. Definir la plantilla del Frontmatter
+	-- Slug con guiones
+	local slug = titulo:gsub("%s+", "-"):lower()
+	local nombre_archivo = string.format("%s-%s.md", id_timestamp, slug)
+	local ruta_completa = "0_Inbox/" .. nombre_archivo
+
+	if vim.uv.fs_stat(ruta_completa) then
+		print("\n⚠️ ¡Error! Ya existe una nota con ese nombre en 0_Inbox/")
+		return
+	end
+
 	local template = {
 		"---",
 		"id: " .. id_timestamp,
 		"aliases: []",
-		"tags: []",
+		"tags: [inbox]",
+		"fecha: " .. os.date("%Y-%m-%d"),
 		"---",
 		"# " .. titulo,
 		"",
+		"## Contexto",
+		"> ¿De dónde viene esta nota? (clase, lectura, idea propia)",
 		"",
+		"## Contenido",
+		"",
+		"",
+		"## Conexiones",
+		"- ",
+		"",
+		"## Acciones",
+		"- [ ] Procesar esta nota",
+		"- [ ] Mover a la carpeta correspondiente",
 	}
 
-	-- 6. Abrir el archivo en un buffer de Neovim
 	vim.cmd("edit " .. ruta_completa)
-
-	-- 7. Inyectar el template de forma segura
 	vim.api.nvim_buf_set_lines(0, 0, -1, false, template)
-
-	-- Mover el cursor al final del archivo para empezar a escribir derecho viejo
 	vim.api.nvim_win_set_cursor(0, { #template, 0 })
 end
 
