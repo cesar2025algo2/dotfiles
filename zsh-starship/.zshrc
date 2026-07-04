@@ -40,7 +40,7 @@ if [ -x /usr/bin/dircolors ]; then
     # fi
 fi
 
-# ============─── Completado ───=============
+# ============─── Completado ───==============
 # ─── Case-insensitive para completion y autosuggestions ───
 zmodload -i zsh/complist                  # Carga ANTES de compinit (crea menu-select y keymap menuselect)
 autoload -Uz compinit
