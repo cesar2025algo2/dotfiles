@@ -4,7 +4,10 @@
 # Variables de entorno locales del script
 LOCAL_LOG="$HOME/.sync-log-local.txt"
 SYNCED_LOG="$HOME/uncuyo/.sync-log.txt"
-REMOTE="UNCuyo:lcc"
+# En laptop exo:
+# REMOTE="UNCuyo:lcc"
+# En laptop hp:
+REMOTE="onedrive:lcc"
 LOCAL_DIR="$HOME/uncuyo/"
 
 # Funciones internas de log
