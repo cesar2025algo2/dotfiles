@@ -28,11 +28,6 @@ vim.keymap.set("n", "<leader>r", utils.run_code, { desc = "run" })
 -- Compilar Markdown a PDF con Reporte de Errores
 vim.keymap.set("n", "<leader>p", utils.pandoc_pdf_preview, { desc = "Pandoc PDF Preview" })
 
--- crea wikilinks
-vim.keymap.set("n", "<leader>wl", function()
-	utils.generate_wikilink_toc()
-end, { desc = "Generar TOC de Wikilinks" })
-
 -- Crear una nota nueva automáticamente en 0_Inbox con Frontmatter (debe estar posicionado en vault)
 vim.keymap.set("n", "<leader>nn", function()
 	utils.new_inbox_note()

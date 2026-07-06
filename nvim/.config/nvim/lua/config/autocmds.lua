@@ -86,20 +86,20 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
--- Autocomando para compilar LaTeX con Tectonic mostrando su salida nativa
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "tex",
-	callback = function()
-		vim.keymap.set("n", "<leader>cf", function()
-			-- 1. Guardar cambios en el archivo .tex
-			vim.cmd("write")
-
-			local ruta_tex = vim.fn.expand("%:p")
-			local carpeta_destino = "03_Attachments"
-
-			-- 2. Ejecutar de forma síncrona para heredar la salida por defecto de la terminal
-			-- Usamos :! para que Neovim dibuje el output crudo de la herramienta
-			vim.cmd(string.format("!tectonic --outdir %s %s", carpeta_destino, vim.fn.shellescape(ruta_tex)))
-		end, { buffer = true, silent = true, desc = "Compilar LaTeX con Tectonic nativo" })
-	end,
-})
+-- -- Autocomando para compilar LaTeX con Tectonic mostrando su salida nativa
+-- vim.api.nvim_create_autocmd("FileType", {
+-- 	pattern = "tex",
+-- 	callback = function()
+-- 		vim.keymap.set("n", "<leader>cf", function()
+-- 			-- 1. Guardar cambios en el archivo .tex
+-- 			vim.cmd("write")
+--
+-- 			local ruta_tex = vim.fn.expand("%:p")
+-- 			local carpeta_destino = "03_Attachments"
+--
+-- 			-- 2. Ejecutar de forma síncrona para heredar la salida por defecto de la terminal
+-- 			-- Usamos :! para que Neovim dibuje el output crudo de la herramienta
+-- 			vim.cmd(string.format("!tectonic --outdir %s %s", carpeta_destino, vim.fn.shellescape(ruta_tex)))
+-- 		end, { buffer = true, silent = true, desc = "Compilar LaTeX con Tectonic nativo" })
+-- 	end,
+-- })
