@@ -11,6 +11,10 @@ return {
 	build = "cd app && npm install",
 	init = function()
 		vim.g.mkdp_filetypes = { "markdown" }
+		-- Aquí configuras el navegador para que use qutebrowser
+		vim.g.mkdp_browser = "qutebrowser"
+		-- Opcional: si quieres asegurarte de que se use la ruta completa
+		-- vim.g.mkdp_browser = "/usr/bin/qutebrowser"
 	end,
 	ft = { "markdown" },
 }

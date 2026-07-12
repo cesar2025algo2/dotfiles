@@ -193,7 +193,7 @@ function M.new_inbox_note()
 	-- Slug con guiones
 	local slug = titulo:gsub("%s+", "-"):lower()
 	local nombre_archivo = string.format("%s-%s.md", id_timestamp, slug)
-	local ruta_completa = "0_Inbox/" .. nombre_archivo
+	local ruta_completa = "~/uncuyo/0_Inbox/" .. nombre_archivo
 
 	if vim.uv.fs_stat(ruta_completa) then
 		print("\n⚠️ ¡Error! Ya existe una nota con ese nombre en 0_Inbox/")

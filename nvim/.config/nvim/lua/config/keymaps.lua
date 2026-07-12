@@ -42,6 +42,9 @@ vim.keymap.set("n", "<leader>zn", utils.new_zettel_note, { desc = "[Z]ettel [N]u
 -- Interceptar la apertura de enlaces a directorios locales
 vim.keymap.set("n", "gx", utils.open_link, { desc = "Abrir link (Directorios en Oil)" })
 
+-- Abrir el índice general del Vault al toque con <leader>vi (Vault Index)
+vim.keymap.set("n", "<leader>gx", ":edit ~/uncuyo/1_Recursos/LaTeX/latex-resume.md<CR>", { desc = "Open LaTeX resume" })
+
 -- -- Interceptar la apertura de enlaces a directorios locales
 -- vim.keymap.set("n", "gx", function()
 -- 	-- Obtener la palabra/enlace bajo el cursor de forma segura
