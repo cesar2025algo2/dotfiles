@@ -249,19 +249,36 @@ end
 -- ==============================================================================
 
 --- Obtiene y sanitiza el texto a traducir (desde el cursor o la selección visual)
---- @return string|nil El texto a traducir, o nil si no se encontró nada válido
 local function obtener_texto_traduccion()
 	local query = ""
 	local mode = vim.api.nvim_get_mode().mode
 
 	if mode:match("[vV]") then
-		-- Capturar selección visual de forma segura sin perder el registro original
-		local old_reg = vim.fn.getreg("v")
-		vim.cmd('normal! "vy')
-		query = vim.fn.getreg("v")
-		vim.fn.setreg("v", old_reg)
-		-- Limpiar espacios y saltos de línea molestos
-		query = query:gsub("^%s+", ""):gsub("%s+$", ""):gsub("\n", " ")
+		-- Salimos del modo visual de manera segura para actualizar las marcas '< y '>
+		local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
+		vim.api.nvim_feedkeys(esc, "x", false)
+
+		-- Obtenemos las marcas de inicio y fin de la selección
+		local start_pos = vim.fn.getpos("'<")
+		local end_pos = vim.fn.getpos("'>")
+
+		-- Extraemos las líneas seleccionadas del buffer actual
+		local lines = vim.api.nvim_buf_get_lines(0, start_pos[2] - 1, end_pos[2], false)
+		if #lines == 0 then
+			return nil
+		end
+
+		-- Si es una selección parcial en una sola línea, recortamos los caracteres sobrantes
+		if #lines == 1 then
+			lines[1] = string.sub(lines[1], start_pos[3], end_pos[3])
+		else
+			lines[1] = string.sub(lines[1], start_pos[3])
+			lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
+		end
+
+		-- Unimos y limpiamos el texto
+		query = table.concat(lines, " ")
+		query = query:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
 	else
 		-- Modo normal: palabra bajo el cursor
 		query = vim.fn.expand("<cword>")
