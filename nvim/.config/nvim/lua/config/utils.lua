@@ -244,4 +244,231 @@ function M.open_link()
 	end
 end
 
+-- ==============================================================================
+-- FUNCIÓN PRIVADA HELPER (No se exporta en M)
+-- ==============================================================================
+
+--- Obtiene y sanitiza el texto a traducir (desde el cursor o la selección visual)
+--- @return string|nil El texto a traducir, o nil si no se encontró nada válido
+local function obtener_texto_traduccion()
+	local query = ""
+	local mode = vim.api.nvim_get_mode().mode
+
+	if mode:match("[vV]") then
+		-- Capturar selección visual de forma segura sin perder el registro original
+		local old_reg = vim.fn.getreg("v")
+		vim.cmd('normal! "vy')
+		query = vim.fn.getreg("v")
+		vim.fn.setreg("v", old_reg)
+		-- Limpiar espacios y saltos de línea molestos
+		query = query:gsub("^%s+", ""):gsub("%s+$", ""):gsub("\n", " ")
+	else
+		-- Modo normal: palabra bajo el cursor
+		query = vim.fn.expand("<cword>")
+	end
+
+	if not query or query == "" then
+		vim.notify("No hay texto para traducir", vim.log.levels.WARN)
+		return nil
+	end
+
+	return query
+end
+
+-- ==============================================================================
+-- FUNCIONES PÚBLICAS (Se exportan para tus Keymaps)
+-- ==============================================================================
+
+--- Traduce usando un split vertical interactivo
+function M.traducir()
+	local query = obtener_texto_traduccion()
+	if not query then
+		return
+	end -- Si no hay texto, salimos (el helper ya tiró el aviso)
+
+	-- 1. Abrimos el split vertical
+	vim.cmd("vsplit")
+	local win = vim.api.nvim_get_current_win()
+	local buf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_win_set_buf(win, buf)
+
+	-- 2. Ejecutamos el script
+	local cmd = "enes " .. vim.fn.shellescape(query)
+	vim.fn.termopen(cmd, {
+		on_exit = function()
+			if vim.api.nvim_win_is_valid(win) then
+				vim.api.nvim_win_close(win, true)
+			end
+		end,
+	})
+
+	-- Atajos del buffer de traducción
+	vim.keymap.set("t", "<Esc>", "<C-\\><C-n>:close<CR>", { buffer = buf, silent = true })
+
+	-- Foco a la terminal interactiva de less
+	vim.cmd("startinsert")
+end
+
+--- Traduce usando una ventana flotante interactiva
+function M.traducir_flotante()
+	local query = obtener_texto_traduccion()
+	if not query then
+		return
+	end
+
+	-- 1. Crear el buffer de la flotante
+	local buf = vim.api.nvim_create_buf(false, true)
+
+	-- Dimensiones centradas
+	local width = math.min(85, vim.o.columns - 10)
+	local height = math.min(25, vim.o.lines - 6)
+	local col = math.floor((vim.o.columns - width) / 2)
+	local row = math.floor((vim.o.lines - height) / 2)
+
+	local opts = {
+		relative = "editor",
+		width = width,
+		height = height,
+		col = col,
+		row = row,
+		style = "minimal",
+		border = "rounded",
+		title = " Traducción: " .. query .. " ",
+		title_pos = "center",
+	}
+
+	-- 2. Abrir ventana flotante
+	local win = vim.api.nvim_open_win(buf, true, opts)
+
+	-- 3. Ejecutar el script
+	local cmd = "enes " .. vim.fn.shellescape(query)
+	vim.fn.termopen(cmd, {
+		on_exit = function()
+			if vim.api.nvim_win_is_valid(win) then
+				vim.api.nvim_win_close(win, true)
+			end
+		end,
+	})
+
+	-- Atajos de emergencia para cerrar la flotante
+	vim.keymap.set("t", "<Esc>", "<C-\\><C-n>:close<CR>", { buffer = buf, silent = true })
+
+	-- Foco a la terminal interactiva de less
+	vim.cmd("startinsert")
+end
+
+-- --- Ejecuta el script 'enes' con el término seleccionado o bajo el cursor
+-- --- Ejecuta el script 'enes' en un split vertical interactivo manteniendo colores y formato
+-- --- @param word string? Palabra a traducir (opcional, si no se pasa, busca la selección visual o el cursor)
+-- function M.traducir(word)
+-- 	local query = word
+--
+-- 	if not query or query == "" then
+-- 		local mode = vim.api.nvim_get_mode().mode
+-- 		if mode:match("[vV]") then
+-- 			local old_reg = vim.fn.getreg("v")
+-- 			vim.cmd('normal! "vy')
+-- 			query = vim.fn.getreg("v")
+-- 			vim.fn.setreg("v", old_reg)
+-- 			query = query:gsub("^%s+", ""):gsub("%s+$", ""):gsub("\n", " ")
+-- 		else
+-- 			query = vim.fn.expand("<cword>")
+-- 		end
+-- 	end
+--
+-- 	if not query or query == "" then
+-- 		vim.notify("No hay palabra seleccionada para traducir", vim.log.levels.WARN)
+-- 		return
+-- 	end
+--
+-- 	-- 1. Abrimos una división vertical vacía
+-- 	vim.cmd("vsplit")
+-- 	local win = vim.api.nvim_get_current_win()
+-- 	local buf = vim.api.nvim_create_buf(false, true)
+-- 	vim.api.nvim_win_set_buf(win, buf)
+--
+-- 	-- 2. Ejecutamos el script en la terminal dentro de ese split
+-- 	local cmd = "enes " .. vim.fn.shellescape(query)
+-- 	vim.fn.termopen(cmd, {
+-- 		-- Cuando salgas de less con 'q', el split se cierra automáticamente
+-- 		on_exit = function()
+-- 			if vim.api.nvim_win_is_valid(win) then
+-- 				vim.api.nvim_win_close(win, true)
+-- 			end
+-- 		end,
+-- 	})
+--
+-- 	-- Atajo de emergencia para cerrar con Esc desde el modo terminal
+-- 	vim.keymap.set("t", "<Esc>", "<C-\\><C-n>:close<CR>", { buffer = buf, silent = true })
+--
+-- 	-- 3. Entramos en modo interactivo para que less capture tus comandos (j, k, flechas, espacio)
+-- 	vim.cmd("startinsert")
+-- end
+--
+-- --- Abre una terminal flotante ejecutando tu script 'enes' manteniendo colores ANSI y formato
+-- --- @param word string? Palabra a traducir (si no se pasa, usa la selección o palabra bajo el cursor)
+-- function M.traducir_flotante(word)
+-- 	local query = word
+--
+-- 	if not query or query == "" then
+-- 		local mode = vim.api.nvim_get_mode().mode
+-- 		if mode:match("[vV]") then
+-- 			local old_reg = vim.fn.getreg("v")
+-- 			vim.cmd('normal! "vy')
+-- 			query = vim.fn.getreg("v")
+-- 			vim.fn.setreg("v", old_reg)
+-- 			query = query:gsub("^%s+", ""):gsub("%s+$", ""):gsub("\n", " ")
+-- 		else
+-- 			query = vim.fn.expand("<cword>")
+-- 		end
+-- 	end
+--
+-- 	if not query or query == "" then
+-- 		vim.notify("No hay texto para traducir", vim.log.levels.WARN)
+-- 		return
+-- 	end
+--
+-- 	-- 	-- 1. Crear el buffer para la ventana flotante
+-- 	local buf = vim.api.nvim_create_buf(false, true)
+-- 	-- 	-- 2. Calcular dimensiones centradas en la pantalla
+-- 	local width = math.min(85, vim.o.columns - 10)
+-- 	local height = math.min(25, vim.o.lines - 6)
+-- 	local col = math.floor((vim.o.columns - width) / 2)
+-- 	local row = math.floor((vim.o.lines - height) / 2)
+--
+-- 	local opts = {
+-- 		relative = "editor",
+-- 		width = width,
+-- 		height = height,
+-- 		col = col,
+-- 		row = row,
+-- 		style = "minimal",
+-- 		border = "rounded",
+-- 		title = " Traducción: " .. query .. " ",
+-- 		title_pos = "center",
+-- 	}
+--
+-- 	-- 	-- 3. Abrir la ventana flotante
+-- 	local win = vim.api.nvim_open_win(buf, true, opts)
+--
+-- 	-- 	-- 4. Ejecutar el script DENTRO de una terminal de Neovim en ese buffer
+-- 	-- 	-- Esto garantiza que los colores ANSI de tu script se rendericen a la perfección
+-- 	local cmd = "enes " .. vim.fn.shellescape(query)
+-- 	vim.fn.termopen(cmd, {
+-- 		-- Cuando el script termine (o salgas de less con 'q'), cerramos la ventana automáticamente
+-- 		on_exit = function()
+-- 			if vim.api.nvim_win_is_valid(win) then
+-- 				vim.api.nvim_win_close(win, true)
+-- 			end
+-- 		end,
+-- 	})
+--
+-- 	-- Atajo de emergencia por si querés cerrar con Esc mientras estás dentro del modo terminal
+-- 	vim.keymap.set("t", "<Esc>", "<C-\\><C-n>:close<CR>", { buffer = buf, silent = true })
+--
+-- 	-- Entramos en modo Insert (modo interactivo de terminal)
+-- 	-- para que 'less' capture tus flechas, j/k, barra espaciadora, etc.
+-- 	vim.cmd("startinsert")
+-- end
+
 return M

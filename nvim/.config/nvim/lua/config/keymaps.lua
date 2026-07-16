@@ -60,3 +60,27 @@ vim.keymap.set("n", "<leader>gx", ":edit ~/uncuyo/1_Recursos/LaTeX/latex-resume.
 -- 		vim.cmd("normal! gx")
 -- 	end
 -- end, { desc = "Abrir link (Directorios en Oil)" })
+--
+
+-- Traducir palabra bajo el cursor (Modo Normal)
+vim.keymap.set("n", "<leader>tre", function()
+	utils.traducir()
+end, { desc = "Traducir palabra bajo el cursor (split)" })
+
+-- Traducir selección (Modo Visual)
+vim.keymap.set("v", "<leader>tre", function()
+	-- Salimos momentáneamente del modo visual para que se actualicen las marcas de selección
+	vim.cmd("esc")
+	utils.traducir()
+end, { desc = "Traducir texto seleccionado (split)" })
+
+-- Traducir bajo el cursor en ventana flotante (Modo Normal)
+vim.keymap.set("n", "<leader>trf", function()
+	utils.traducir_flotante()
+end, { desc = "Traducir palabra (flotante)" })
+
+-- Traducir selección en ventana flotante (Modo Visual)
+vim.keymap.set("v", "<leader>trf", function()
+	vim.cmd("esc") -- salir de modo visual para actualizar marcas
+	utils.traducir_flotante()
+end, { desc = "Traducir selección (flotante)" })
