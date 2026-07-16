@@ -104,7 +104,28 @@ end, {
 })
 
 -- Otras configuraciones específicas de Markdown
+-- 1. Configuración básica de texto y corrector bilingüe por defecto
 vim.opt_local.wrap = true
 vim.opt_local.linebreak = true
 vim.opt_local.spell = true
-vim.opt_local.spelllang = "es"
+vim.opt_local.spelllang = { "en", "es" }
+
+-- 2. Atajos rápidos para alternar el idioma del corrector
+local function set_spell_lang(lang, label)
+	vim.opt_local.spelllang = lang
+	-- Forzamos un refresco visual de la pantalla para actualizar las marcas rojas inmediatamente
+	vim.cmd("redraw")
+	vim.notify("Corrector: " .. label, vim.log.levels.INFO, { title = "Spellcheck" })
+end
+
+vim.keymap.set("n", "<leader>se", function()
+	set_spell_lang("en_us", "English (en_us)")
+end, { buffer = true, desc = "Spell check English" })
+
+vim.keymap.set("n", "<leader>ss", function()
+	set_spell_lang("es", "Spanish")
+end, { buffer = true, desc = "Spell check Spanish" })
+
+vim.keymap.set("n", "<leader>sb", function()
+	set_spell_lang({ "es", "en" }, "Bilingual (es, en)")
+end, { buffer = true, desc = "Spell check Bilingüe" })
