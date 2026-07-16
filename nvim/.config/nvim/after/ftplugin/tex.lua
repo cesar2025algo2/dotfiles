@@ -99,9 +99,10 @@ vim.keymap.set("n", "<leader>ti", 'ciw\\textit{<C-r>"}<ESC>', {
 -- Puedes agregar más configuraciones específicas para TeX aquí
 -- Activar el corrector ortográfico solo en este búfer
 vim.opt_local.foldmethod = "indent"
-vim.opt_local.spell = true
+
 -- Configurar el idioma en español
-vim.opt_local.spelllang = "es"
+local utils = require("config.utils")
+utils.setup_bilingual_spell()
 
 -- (Opcional) Si escribís fórmulas matemáticas, esto ayuda a que wrap no rompa líneas a mitad de palabra
 vim.opt_local.wrap = true
