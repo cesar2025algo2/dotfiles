@@ -149,6 +149,7 @@ id: %s
 title: %s
 tags: []
 fecha: %s
+modificado: %s
 tipo: permanente
 ---
 
@@ -173,6 +174,7 @@ tipo: permanente
 		date,
 		title,
 		os.date("%Y-%m-%d"),
+		os.date("%Y-%m-%d %H:%M"), -- Inicialmente igual a la de creación
 		title
 	)
 
@@ -206,6 +208,7 @@ function M.new_inbox_note()
 		"aliases: []",
 		"tags: [inbox]",
 		"fecha: " .. os.date("%Y-%m-%d"),
+		"modificado: " .. os.date("%Y-%m-%d %H:%M"), -- Inicialmente igual
 		"---",
 		"# " .. titulo,
 		"",
@@ -226,6 +229,58 @@ function M.new_inbox_note()
 	vim.cmd("edit " .. ruta_completa)
 	vim.api.nvim_buf_set_lines(0, 0, -1, false, template)
 	vim.api.nvim_win_set_cursor(0, { #template, 0 })
+end
+
+-- Actualiza automáticamente el campo 'modificado' en el frontmatter de Markdown
+function M.update_markdown_modified_date()
+	local bufnr = vim.api.nvim_get_current_buf()
+
+	-- Solo actuar si el buffer realmente fue modificado
+	if not vim.api.nvim_get_option_value("modified", { buf = bufnr }) then
+		return
+	end
+
+	-- Leemos las primeras 20 líneas (suficiente para cualquier frontmatter estándar)
+	local lines = vim.api.nvim_buf_get_lines(bufnr, 0, 20, false)
+	local inside_frontmatter = false
+	local updated = false
+	local closing_yaml_line = nil
+
+	local current_date = os.date("%Y-%m-%d %H:%M")
+
+	for i, line in ipairs(lines) do
+		if line == "---" then
+			if not inside_frontmatter then
+				inside_frontmatter = true
+			else
+				-- Encontramos el cierre del frontmatter
+				closing_yaml_line = i
+				break
+			end
+		elseif inside_frontmatter then
+			-- Si el campo ya existe, lo actualizamos
+			if line:match("^modificado%s*:") then
+				lines[i] = "modificado: " .. current_date
+				updated = true
+				break
+			end
+		end
+	end
+
+	-- Si salimos del bucle y no se actualizó, pero encontramos el cierre del frontmatter (nota vieja)
+	if not updated and closing_yaml_line then
+		-- Insertamos el campo justo antes de la línea de cierre '---'
+		table.insert(lines, closing_yaml_line, "modificado: " .. current_date)
+		updated = true
+	end
+
+	-- Si hubo cambios, actualizamos el buffer manteniendo la posición del cursor
+	if updated then
+		local cursor_pos = vim.api.nvim_win_get_cursor(0)
+		vim.api.nvim_buf_set_lines(bufnr, 0, #lines, false, lines)
+		-- Evitamos que el cursor tire error si por alguna razón la posición quedó fuera de rango
+		pcall(vim.api.nvim_win_set_cursor, 0, cursor_pos)
+	end
 end
 
 -- Abrir archivo usando la api de oil

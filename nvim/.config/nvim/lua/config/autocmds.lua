@@ -86,6 +86,20 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+local utils = require("config.utils")
+
+-- Grupo para agrupar nuestros autocomandos de notas
+local notes_group = vim.api.nvim_create_augroup("NotesAutomation", { clear = true })
+
+-- Actualizar fecha de modificación automáticamente antes de guardar en Markdown
+vim.api.nvim_create_autocmd("BufWritePre", {
+	group = notes_group,
+	pattern = "*.md",
+	callback = function()
+		utils.update_markdown_modified_date()
+	end,
+})
+
 -- -- Autocomando para compilar LaTeX con Tectonic mostrando su salida nativa
 -- vim.api.nvim_create_autocmd("FileType", {
 -- 	pattern = "tex",
