@@ -68,6 +68,8 @@ return {
 				-- Si no es ningún formato especial, usar el comportamiento normal de Oil
 				oil.select()
 			end,
+			["<C-v>"] = { "actions.select", opts = { vertical = true } },
+			["<C-x>"] = { "actions.select", opts = { horizontal = true } },
 		},
 	},
 	-- Optional dependencies
