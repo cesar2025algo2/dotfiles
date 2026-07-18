@@ -1,6 +1,6 @@
 -- ~/.config/nvim/lua/config/keymaps.lua
 
--- Limpiar búsqueda con Esc
+-- Limpiar búsqueda con Esc (quita el resaltado de la búsqueda)
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Navegación entre ventanas más fácil
@@ -69,3 +69,18 @@ vim.keymap.set("v", "<leader>tre", utils.traducir, { desc = "Traducir selección
 -- Traducir en ventana flotante
 vim.keymap.set("n", "<leader>trf", utils.traducir_flotante, { desc = "Traducir palabra (flotante)" })
 vim.keymap.set("v", "<leader>trf", utils.traducir_flotante, { desc = "Traducir selección (flotante)" })
+
+-- Crear el comando :Translate para la línea de comandos de Neovim
+vim.api.nvim_create_user_command("Translate", function(opts)
+	-- Si el usuario pasó un argumento (ej: :Translate goal), se lo enviamos a la función
+	if opts.args and opts.args ~= "" then
+		utils.traducir_flotante(opts.args)
+	else
+		-- Si el usuario no pasó nada (ej: escribió solo :Translate),
+		-- cae por defecto en la palabra bajo el cursor
+		utils.traducir_flotante()
+	end
+end, {
+	nargs = "?", -- Significa que el argumento es opcional
+	desc = "Traducir una palabra o frase en una ventana flotante",
+})

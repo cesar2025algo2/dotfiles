@@ -300,11 +300,18 @@ function M.open_link()
 end
 
 -- ==============================================================================
--- FUNCIÓN PRIVADA HELPER (No se exporta en M)
+-- FUNCIÓN PRIVADA HELPER (Acepta un argumento opcional)
 -- ==============================================================================
 
---- Obtiene y sanitiza el texto a traducir (desde el cursor o la selección visual)
-local function obtener_texto_traduccion()
+--- Obtiene y sanitiza el texto a traducir
+--- @param argument string? Texto enviado directamente desde un comando (opcional)
+--- @return string|nil El texto a traducir, o nil si no se encontró nada válido
+local function obtener_texto_traduccion(argument)
+	-- 1. Si el usuario ya pasó un texto directo (ej: desde :Translate goal), lo usamos de una
+	if argument and argument ~= "" then
+		return argument
+	end
+
 	local query = ""
 	local mode = vim.api.nvim_get_mode().mode
 
@@ -352,8 +359,8 @@ end
 -- ==============================================================================
 
 --- Traduce usando un split vertical interactivo
-function M.traducir()
-	local query = obtener_texto_traduccion()
+function M.traducir(word)
+	local query = obtener_texto_traduccion(word) -- <-- Le pasamos word al helper
 	if not query then
 		return
 	end -- Si no hay texto, salimos (el helper ya tiró el aviso)
@@ -382,8 +389,8 @@ function M.traducir()
 end
 
 --- Traduce usando una ventana flotante interactiva
-function M.traducir_flotante()
-	local query = obtener_texto_traduccion()
+function M.traducir_flotante(word)
+	local query = obtener_texto_traduccion(word) -- <-- Le pasamos word al helper
 	if not query then
 		return
 	end
