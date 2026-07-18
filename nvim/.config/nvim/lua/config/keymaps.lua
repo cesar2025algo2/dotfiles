@@ -63,12 +63,12 @@ vim.keymap.set("n", "<leader>gx", ":edit ~/uncuyo/1_Recursos/LaTeX/latex-resume.
 --
 
 -- Traducir en split vertical
-vim.keymap.set("n", "<leader>tre", utils.traducir, { desc = "Traducir palabra (split)" })
-vim.keymap.set("v", "<leader>tre", utils.traducir, { desc = "Traducir selección (split)" })
+vim.keymap.set("n", "<leader>qs", utils.traducir, { desc = "Traducir palabra (split)" })
+vim.keymap.set("v", "<leader>qs", utils.traducir, { desc = "Traducir selección (split)" })
 
 -- Traducir en ventana flotante
-vim.keymap.set("n", "<leader>trf", utils.traducir_flotante, { desc = "Traducir palabra (flotante)" })
-vim.keymap.set("v", "<leader>trf", utils.traducir_flotante, { desc = "Traducir selección (flotante)" })
+vim.keymap.set("n", "<leader>qa", utils.traducir_flotante, { desc = "Traducir palabra (flotante)" })
+vim.keymap.set("v", "<leader>qa", utils.traducir_flotante, { desc = "Traducir selección (flotante)" })
 
 -- Crear el comando :Translate para la línea de comandos de Neovim
 vim.api.nvim_create_user_command("Translate", function(opts)
