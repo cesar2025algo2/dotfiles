@@ -30,6 +30,14 @@ M.run_code = function()
 		local dir = vim.fn.expand("%:p:h")
 		-- Compila en el directorio actual y ejecuta
 		cmd = string.format("javac '%s' && java -cp '%s' %s", filename, dir, class_name)
+	elseif filetype == "prolog" then
+		-- Opción A: Si usás SWI-Prolog y querés que ejecute un predicado inicial automático (ej: 'main')
+		-- cmd = string.format("swipl -q -t main -f '%s'", filename)
+
+		-- Opción B: Carga el archivo y te deja la consola interactiva de Prolog abierta en el split
+		-- para finalizar consulta escribe `halt.`
+		-- Si editás tu código arriba en Neovim y agregás nuevos hechos, no hace falta que cierres la terminal abajo. Podés pararte en la consola interactiva de Prolog y escribir: `make.`
+		cmd = string.format("swipl -s '%s'", filename)
 	else
 		print("Lenguaje no configurado para ejecución automática.")
 		return
