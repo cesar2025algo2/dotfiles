@@ -266,6 +266,11 @@ bindsym $mod+m mode "mouse"
     bindsym $mod+Shift+x exec grim ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png
     # Capturar área seleccionada (Mod+Ctrl+X) y guarda en Pictures
     bindsym $mod+Control+x exec grim -g "$(slurp)" /home/cesarf/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png
+    # Capturar área seleccionada (Mod+Ctrl+n) y guarda en images
+    bindsym $mod+Control+n exec grim -g "$(slurp)" /home/cesarf/uncuyo/1_Recursos/images/$(date +%Y-%m-%d_%H-%m-%s).png
+
+# Opción recomendada (con wofi)
+bindsym $mod+Control+m exec bash -c 'tag=$(echo "" | wmenu -p "Etiqueta:" | tr "[:upper:]" "[:lower:]" | tr " " "-"); filename=$(date +%Y-%m-%d_%H-%M-%S)${tag:+_${tag}}.png; grim -g "$(slurp)" "/home/cesarf/uncuyo/1_Recursos/images/$filename"'
 
 #
 # Status Bar:
