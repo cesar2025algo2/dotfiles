@@ -54,6 +54,11 @@ return {
 						vim.fn.jobstart({ "mpv", path }, { detach = true })
 						return
 
+					-- 2. Imágenes con imv
+					elseif name:match("%.jpg$") or name:match("%.jpeg$") or name:match("%.png") then
+						vim.fn.jobstart({ "imv", path }, { detach = true })
+						return
+
 					-- 3. Documentos de texto (ODT, DOCX) enviados al sistema
 					elseif
 						name:match("%.odt$")
